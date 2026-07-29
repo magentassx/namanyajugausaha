@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sanlucid Digital E-Books</title>
+    
+    <link rel="preconnect" href="https://backend-8occ.onrender.com" crossorigin>
+    <link rel="preconnect" href="https://wsrv.nl" crossorigin>
+    <link rel="dns-prefetch" href="https://wsrv.nl">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        @keyframes sweep1 { 0% { transform: translate3d(-30vw, -20vh, 0) scale(1); } 33% { transform: translate3d(60vw, 50vh, 0) scale(1.3); } 66% { transform: translate3d(-10vw, 80vh, 0) scale(0.8); } 100% { transform: translate3d(80vw, -10vh, 0) scale(1.2); } }
+        @keyframes sweep2 { 0% { transform: translate3d(80vw, 80vh, 0) scale(1.2); } 33% { transform: translate3d(-20vw, 40vh, 0) scale(0.8); } 66% { transform: translate3d(50vw, -20vh, 0) scale(1.4); } 100% { transform: translate3d(-40vw, 90vh, 0) scale(1); } }
+        @keyframes sweep3 { 0% { transform: translate3d(-20vw, 80vh, 0) scale(0.9); } 33% { transform: translate3d(70vw, 10vh, 0) scale(1.4); } 66% { transform: translate3d(10vw, 60vh, 0) scale(1); } 100% { transform: translate3d(90vw, -30vh, 0) scale(1.2); } }
+        @keyframes sweep4 { 0% { transform: translate3d(90vw, -20vh, 0) scale(1.3); } 33% { transform: translate3d(-10vw, 70vh, 0) scale(0.9); } 66% { transform: translate3d(60vw, 90vh, 0) scale(1.1); } 100% { transform: translate3d(-30vw, 10vh, 0) scale(1.4); } }
+
+        .blob-base { position: absolute; will-change: transform; animation-iteration-count: infinite; animation-direction: alternate; animation-timing-function: ease-in-out; }
+        .color-1 { background: radial-gradient(circle, rgba(219,39,119,0.7) 0%, rgba(219,39,119,0) 70%); animation-name: sweep1; animation-duration: 13s; }
+        .color-2 { background: radial-gradient(circle, rgba(6,182,212,0.7) 0%, rgba(6,182,212,0) 70%); animation-name: sweep2; animation-duration: 15s; }
+        .color-3 { background: radial-gradient(circle, rgba(124,58,237,0.7) 0%, rgba(124,58,237,0) 70%); animation-name: sweep3; animation-duration: 19s; }
+        .color-4 { background: radial-gradient(circle, rgba(16,185,129,0.7) 0%, rgba(16,185,129,0) 70%); animation-name: sweep4; animation-duration: 23s; }
+
+        .glass-panel { background: rgba(20, 25, 40, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(25, 30, 45, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); transform: translateZ(0); transition: transform 0.2s ease, box-shadow 0.2s ease; content-visibility: auto; }
+        .glass-card:hover { transform: translate3d(0, -4px, 0); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); background: rgba(35, 40, 55, 0.98); }
+
+        .search-fab-container { position: fixed; bottom: 1.5rem; right: 1.5rem; height: 3.5rem; width: 3.5rem; border-radius: 9999px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 90; overflow: hidden; display: flex; align-items: center; background: rgba(20, 25, 40, 0.95); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
+        .search-fab-container.expanded { width: calc(100vw - 3rem); max-width: 24rem; }
+        .search-input-mobile { width: 100%; background: transparent; border: none; color: white; padding-left: 3.5rem; padding-right: 3rem; outline: none; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .search-fab-container.expanded .search-input-mobile { opacity: 1; pointer-events: auto; }
+        .fab-icon-box, .fab-close-btn { position: absolute; top: 0; width: 3.5rem; height: 3.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+        .fab-icon-box { left: 0; }
+        .fab-close-btn { right: 0; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .search-fab-container.expanded .fab-close-btn { opacity: 1; pointer-events: auto; }
+        
+        .popup-scale { animation: popScale 0.3s ease-out forwards; }
+        @keyframes popScale { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes floatBubble { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-8px) scale(1.02); } }
+        .animate-float { animation: floatBubble 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="text-slate-200 font-sans antialiased relative min-h-screen bg-[#050b14] pb-20 md:pb-0 overflow-x-hidden">
+
+    <div class="fixed inset-0 z-[-2] bg-[#050b14] pointer-events-none">
+        <div class="blob-base color-1 w-[120vw] h-[120vw] md:w-[70vw] md:h-[70vw]"></div>
+        <div class="blob-base color-2 w-[110vw] h-[110vw] md:w-[65vw] md:h-[65vw]"></div>
+        <div class="blob-base color-3 w-[130vw] h-[130vw] md:w-[80vw] md:h-[80vw]"></div>
+        <div class="blob-base color-4 w-[115vw] h-[115vw] md:w-[75vw] md:h-[75vw]"></div>
+    </div>
+
+    <nav class="sticky top-0 z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                <div class="flex-shrink-0 text-xl font-bold tracking-widest text-white">SANLUCID<span class="text-cyan-400 font-black">.</span></div>
+                <div class="flex-1 max-w-xl hidden md:block">
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-white/50 group-focus-within:text-cyan-400 transition-colors"></i></div>
+                        <input type="text" id="desktopSearch" oninput="debounceSearch(this.value)" class="block w-full pl-11 pr-10 py-2 border border-white/20 rounded-full bg-white/[0.04] text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400 focus:bg-white/[0.08] sm:text-sm transition-all" placeholder="Cari judul, kategori, atau deskripsi e-book...">
+                        <button id="clearSearchBtn" onclick="clearDesktopSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden text-white/40 hover:text-white transition-colors focus:outline-none">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <button id="supportBtn" onclick="toggleSupportMenu()" class="flex items-center text-xs font-bold px-4 py-1.5 rounded-full bg-white/[0.08] border border-white/20 hover:bg-white/[0.15] transition-all focus:outline-none z-50">
+                        <i class="fa-solid fa-headset text-cyan-400 mr-2"></i> <span class="text-white/90">Support</span> <i id="supportIcon" class="fa-solid fa-chevron-down text-white/50 ml-2 text-[10px] transition-transform duration-300"></i>
+                    </button>
+                    <div id="supportMenu" class="absolute right-0 mt-2 w-44 opacity-0 invisible scale-95 transition-all duration-300 transform origin-top-right z-[100]">
+                        <div class="bg-[#0a0a0a] rounded-xl overflow-hidden py-1 border border-white/20 shadow-[0_15px_50px_rgba(0,0,0,0.8)]">
+                            <a href="https://wa.me/6281234567890" target="_blank" class="flex items-center px-4 py-3 hover:bg-white/10 transition-colors"><i class="fa-brands fa-whatsapp text-emerald-400 text-lg mr-3"></i><span class="text-white/90 text-xs font-bold tracking-wide">WhatsApp</span></a>
+                            <div class="h-px w-full bg-white/10"></div>
+                            <a href="https://t.me/sanlucid" target="_blank" class="flex items-center px-4 py-3 hover:bg-white/10 transition-colors"><i class="fa-brands fa-telegram text-blue-400 text-lg mr-3"></i><span class="text-white/90 text-xs font-bold tracking-wide">Telegram</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="border-t border-white/[0.08]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div id="categoryContainer" class="flex space-x-6 overflow-x-auto py-3 scrollbar-hide text-xs font-medium tracking-wide"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 relative z-10">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6" id="productGrid"></div>
+        <div class="mt-10 text-center hidden" id="loadMoreContainer">
+            <button onclick="loadMore()" class="px-8 py-3 bg-white/10 border border-white/20 hover:bg-white/20 text-white font-bold rounded-full transition-all shadow-lg">Lihat Lebih Banyak <i class="fa-solid fa-chevron-down ml-2"></i></button>
+        </div>
+        <div class="mt-10 text-center hidden" id="emptyState">
+            <i class="fa-solid fa-box-open text-5xl text-white/20 mb-4"></i>
+            <p class="text-white/50" id="emptyStateMsg">Katalog masih kosong atau tidak ditemukan.</p>
+        </div>
+    </main>
+
+    <button id="downloadBubble" onclick="toggleLibraryPopup()" class="fixed z-[80] hidden flex items-center justify-center bg-gradient-to-tr from-cyan-500 to-blue-600 text-white rounded-full shadow-[0_10px_25px_rgba(6,182,212,0.5)] border border-cyan-400/50 hover:brightness-110 transition-all md:bottom-6 md:right-6 bottom-24 right-6 w-14 h-14 animate-float">
+        <i class="fa-solid fa-cloud-arrow-down text-xl"></i>
+        <span id="downloadCount" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-[#050b14] shadow-md">0</span>
+    </button>
+
+    <div id="mobileSearchFab" class="search-fab-container md:hidden">
+        <div class="fab-icon-box" onclick="toggleMobileSearch()"><i class="fa-solid fa-magnifying-glass text-white text-lg"></i></div>
+        <input type="text" id="mobileSearchInput" oninput="debounceSearch(this.value)" class="search-input-mobile" placeholder="Cari judul atau kategori...">
+        <div class="fab-close-btn" onclick="toggleMobileSearch()"><i class="fa-solid fa-xmark text-white/70 text-lg hover:text-white transition-colors"></i></div>
+    </div>
+
+    <!-- POP-UP DETAIL PRODUK -->
+    <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="tutupPopupOverlay(event)">
+        <div class="flex flex-col items-center w-full max-w-sm" style="max-height: 95vh;">
+            <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full flex flex-col overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.6)] popup-scale relative" style="max-height: calc(95vh - 70px);">
+                <div class="pt-5 pb-3 px-4 flex flex-col items-center text-center shrink-0 border-b border-white/5">
+                    <img id="popImg" src="" loading="lazy" decoding="async" alt="Cover Detail" class="w-24 md:w-28 h-auto object-cover rounded-lg shadow-lg mb-3 border border-white/10">
+                    <span id="popKategori" class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mb-1"></span>
+                    <h3 id="popJudul" class="text-base font-bold text-white leading-tight"></h3>
+                </div>
+                <div class="p-4 overflow-y-auto grow text-sm text-white/70 leading-relaxed text-justify">
+                    <p id="popDeskripsi"></p>
+                </div>
+                <div class="p-4 bg-white/[0.03] border-t border-white/10 shrink-0">
+                    <a id="popSampleBtn" href="#" target="_blank" class="block w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-center text-sm font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                        <i class="fa-solid fa-file-pdf mr-2"></i> Baca Free Sample
+                    </a>
+                </div>
+            </div>
+            <button onclick="tutupPopup()" class="mt-4 bg-red-500 hover:bg-red-400 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-[0_4px_15px_rgba(239,68,68,0.5)] border border-white/20 transition-all shrink-0 popup-scale">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- POP-UP DAFTAR UNDUHAN SAYA -->
+    <div id="libraryPopup" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="if(event.target.id==='libraryPopup') toggleLibraryPopup()">
+        <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-md flex flex-col overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.8)] popup-scale relative" style="max-height: 85vh;">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/[0.02] shrink-0">
+                <h2 class="text-white font-bold text-base md:text-lg"><i class="fa-solid fa-box-open text-cyan-400 mr-2"></i>E-Book Saya</h2>
+                <button onclick="toggleLibraryPopup()" class="text-white/50 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="libraryList" class="p-4 overflow-y-auto grow flex flex-col gap-3"></div>
+        </div>
+    </div>
+
+    <!-- POP-UP PEMBAYARAN QRIS -->
+    <div id="qrisPopup" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="bg-[#f8f9fa] rounded-3xl w-full max-w-sm flex flex-col overflow-hidden items-center p-6 text-slate-800 shadow-[0_0_50px_rgba(6,182,212,0.3)] popup-scale relative border-4 border-cyan-500/20">
+            <div class="w-full flex justify-between items-center mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS" class="h-6">
+                <button onclick="closeQrisPopup()" class="text-slate-400 hover:text-rose-500 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <h3 class="font-black text-2xl mb-1 text-slate-900" id="qrisTotal">Rp 0</h3>
+            <p class="text-[11px] text-slate-500 mb-5 text-center font-medium leading-relaxed">
+                Scan kode QR ini menggunakan aplikasi m-Banking atau Dompet Digital Anda.
+            </p>
+            
+            <div id="qrisCodeContainer" class="bg-white p-3 rounded-2xl shadow-[0_5px_15px_rgba(0,0,0,0.1)] mb-5 flex justify-center border border-slate-200 w-52 h-52 items-center">
+            </div>
+            
+            <div class="flex items-center text-xs font-bold text-cyan-600 bg-cyan-100 px-4 py-2 rounded-full animate-pulse shadow-sm w-full justify-center">
+                <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Menunggu Pembayaran...
+            </div>
+
+            <button id="btnSimulate" onclick="triggerSimulation()" class="mt-4 w-full py-2 bg-orange-100/50 text-orange-600 border border-orange-300 font-bold rounded-xl hover:bg-orange-100 transition-colors text-xs flex justify-center items-center">
+                Simulasikan pembayaran
+            </button>
+        </div>
+    </div>
+
+    <!-- POP-UP SUKSES PEMBAYARAN -->
+    <div id="successPopup" class="fixed inset-0 z-[130] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="closeSuccessPopupOverlay(event)">
+        <div class="bg-[#0f172a] border border-emerald-500/30 rounded-2xl w-full max-w-sm flex flex-col items-center p-6 text-center shadow-[0_0_40px_rgba(16,185,129,0.2)] popup-scale relative">
+            <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                <i class="fa-solid fa-check text-3xl text-emerald-400"></i>
+            </div>
+            <h3 class="text-white font-bold text-xl mb-2">Pembayaran Berhasil!</h3>
+            <p class="text-white/70 text-sm mb-6 leading-relaxed">
+                Terima kasih! Berkas e-book Anda sudah tersedia dan siap untuk diunduh sekarang.
+            </p>
+            <button onclick="closeSuccessPopup()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "https://backend-8occ.onrender.com/api";
+        const ITEMS_PER_PAGE = 24; 
+        
+        let appState = {
+            fingerprint: "",
+            purchasedMap: {},
+            productCache: {}, 
+            currentPage: 1,
+            currentSearch: "",
+            currentKategori: "",
+            hasMore: false,
+            isLoading: false,
+            pendingProductId: null,
+            currentOrderId: null
+        };
+
+        let qrisCheckInterval; 
+
+        async function initializeApp() {
+            try {
+                if (window.localStorage) {
+                    const savedCache = window.localStorage.getItem('sanlucid_product_cache');
+                    if(savedCache) appState.productCache = JSON.parse(savedCache);
+                }
+            } catch(e) { appState.productCache = {}; }
+
+            await getFingerprintAndPurchases();
+            await fetchCategories();
+            await fetchProducts(false);
+        }
+
+        function saveCacheSafe() {
+            try {
+                if (window.localStorage) {
+                    window.localStorage.setItem('sanlucid_product_cache', JSON.stringify(appState.productCache));
+                }
+            } catch(e) {
+                // Biarkan hening jika diblokir oleh browser
+            }
+        }
+
+        async function fetchCategories() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/categories`);
+                if(res.ok) {
+                    const cats = await res.json();
+                    const container = document.getElementById('categoryContainer');
+                    let html = `<button onclick="filterByCategory('', this)" class="category-btn text-cyan-400 whitespace-nowrap font-bold">Semua E-Book</button>`;
+                    cats.forEach(cat => {
+                        html += `<button onclick="filterByCategory('${cat}', this)" class="category-btn text-white/70 hover:text-white whitespace-nowrap transition-colors uppercase">${cat}</button>`;
+                    });
+                    container.innerHTML = html;
+                }
+            } catch(e) {}
+        }
+
+        async function fetchProducts(append = false) {
+            if(appState.isLoading) return;
+            appState.isLoading = true;
+
+            const grid = document.getElementById('productGrid');
+            const loadMoreBtn = document.getElementById('loadMoreContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            if (!append) {
+                grid.innerHTML = '<div class="col-span-full text-center py-10 text-white/50"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3 text-cyan-400"></i><p>Memuat Data Server...</p></div>';
+                loadMoreBtn.classList.add('hidden');
+                emptyState.classList.add('hidden');
+            }
+
+            try {
+                const url = `${API_BASE_URL}/products?page=${appState.currentPage}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(appState.currentSearch)}&kategori=${encodeURIComponent(appState.currentKategori)}`;
+                const res = await fetch(url);
+                if(!res.ok) throw new Error("Gagal terhubung ke database peladen.");
+                
+                const data = await res.json();
+                
+                if (!append) grid.innerHTML = '';
+                
+                if (data.products.length === 0 && !append) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    renderCards(data.products, grid);
+                }
+
+                appState.hasMore = data.has_more;
+                if (appState.hasMore) {
+                    loadMoreBtn.classList.remove('hidden');
+                } else {
+                    loadMoreBtn.classList.add('hidden');
+                }
+            } catch (e) {
+                if(!append) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-rose-400 font-bold"><i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i><br>Gagal memuat katalog.<br><span class="text-xs text-white/50 font-normal mt-2 block">${e.message}</span></div>`;
+                }
+            } finally {
+                appState.isLoading = false;
+            }
+        }
+
+        function renderCards(productsArray, gridElement) {
+            const fragment = document.createDocumentFragment();
+
+            productsArray.forEach(product => {
+                appState.productCache[product.id] = product;
+                
+                const isPurchased = appState.purchasedMap[product.id];
+                const priceFormatted = new Intl.NumberFormat('id-ID').format(product.price);
+                
+                let safeImg = "https://placehold.co/300x450/1e293b/94a3b8?text=No+Cover";
+                if (product.cover_url && product.cover_url.trim() !== "") {
+                    safeImg = `https://wsrv.nl/?url=${product.cover_url.replace("i.ibb.co", "i.ibb.co.com")}&w=300&output=webp`;
+                }
+                
+                const masterDownloadUrl = `${API_BASE_URL}/download/${product.id}?fingerprint=${appState.fingerprint}`;
+                const actionPopup = `bukaPopup('${product.id}')`;
+
+                const buttonHtml = isPurchased 
+                    ? `<a href="${masterDownloadUrl}" target="_blank" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`
+                    : `<button id="btn-${product.id}" onclick="processCheckout('${product.id}', this)" class="w-full py-2 bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 text-[10px] md:text-xs font-semibold rounded-xl transition-colors">Beli Sekarang</button>`;
+
+                const card = document.createElement('div');
+                card.className = "glass-card flex flex-col rounded-2xl overflow-hidden";
+                card.innerHTML = `
+                    <div class="aspect-[2/3] bg-black/40 relative overflow-hidden p-2 md:p-3 group">
+                        <button onclick="${actionPopup}" class="absolute top-2 left-2 md:top-3 md:left-3 bg-black/60 hover:bg-cyan-500 w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full text-white border border-white/20 z-30 transition-all shadow-lg">
+                            <i class="fa-solid fa-eye text-[10px] md:text-xs"></i>
+                        </button>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-white/[0.15] to-transparent pointer-events-none z-10"></div>
+                        <img onclick="${actionPopup}" src="${safeImg}" loading="lazy" decoding="async" alt="Cover" class="w-full h-full object-cover rounded-lg md:rounded-xl shadow-md group-hover:scale-105 transition-transform duration-500 cursor-pointer">
+                        <div class="absolute top-3 right-3 md:top-5 md:right-5 bg-black/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded text-[8px] md:text-[9px] font-bold tracking-widest text-white border border-white/20 z-20">PDF</div>
+                    </div>
+                    <div class="p-3 md:p-4 flex flex-col flex-1">
+                        <h3 onclick="${actionPopup}" class="text-xs md:text-sm font-bold text-white line-clamp-2 leading-snug mb-1 cursor-pointer hover:text-cyan-400 transition-colors">${product.title || 'Tanpa Judul'}</h3>
+                        <p class="text-[9px] md:text-[11px] text-white/50 mb-2 font-medium uppercase tracking-wider">${product.kategori || 'UMUM'}</p>
+                        <div class="mt-auto mb-3"><span class="text-cyan-400 font-black text-xs md:text-sm">Rp ${priceFormatted}</span></div>
+                        <div class="mt-auto" id="container-btn-${product.id}">${buttonHtml}</div>
+                    </div>
+                `;
+                fragment.appendChild(card);
+            });
+
+            gridElement.appendChild(fragment);
+            saveCacheSafe();
+            updatePurchaseButtons();
+        }
+
+        async function getFingerprintAndPurchases() {
+            let savedId = null;
+            
+            try {
+                if (window.localStorage) savedId = window.localStorage.getItem('sanlucid_device_id');
+            } catch(e) {}
+            
+            if (savedId) {
+                appState.fingerprint = savedId;
+            } else {
+                try {
+                    if (window.FingerprintJS) {
+                        const fp = await window.FingerprintJS.load();
+                        const result = await fp.get();
+                        savedId = result.visitorId;
+                    } else { 
+                        throw new Error("Pustaka Pelacakan Gagal Dimuat"); 
+                    }
+                } catch (error) {
+                    savedId = 'anon-' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+                }
+                
+                try {
+                    if (window.localStorage) window.localStorage.setItem('sanlucid_device_id', savedId);
+                } catch (e) {}
+                
+                appState.fingerprint = savedId;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/purchases`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fingerprint: appState.fingerprint })
+                });
+                if(response.ok) {
+                    const data = await response.json();
+                    appState.purchasedMap = data.purchases || {};
+                    updateDownloadBubble(); 
+                }
+            } catch (e) {}
+        }
+
+        function updatePurchaseButtons() {
+            Object.keys(appState.purchasedMap).forEach(productId => {
+                const btnContainer = document.getElementById(`container-btn-${productId}`);
+                if (btnContainer) {
+                    const masterDownloadUrl = `${API_BASE_URL}/download/${productId}?fingerprint=${appState.fingerprint}`;
+                    btnContainer.innerHTML = `<a href="${masterDownloadUrl}" target="_blank" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`;
+                }
+            });
+        }
+
+        function updateDownloadBubble() {
+            const purchasedCount = Object.keys(appState.purchasedMap).length;
+            const bubble = document.getElementById('downloadBubble');
+            const countBadge = document.getElementById('downloadCount');
+            if (purchasedCount > 0) {
+                bubble.classList.remove('hidden');
+                countBadge.innerText = purchasedCount;
+            } else {
+                bubble.classList.add('hidden');
+            }
+        }
+
+        function toggleLibraryPopup() {
+            const popup = document.getElementById('libraryPopup');
+            if (popup.classList.contains('hidden')) {
+                const list = document.getElementById('libraryList');
+                list.innerHTML = '';
+                const keys = Object.keys(appState.purchasedMap);
+                
+                if (keys.length === 0) {
+                    list.innerHTML = '<div class="text-center text-white/50 py-10 flex flex-col items-center"><i class="fa-solid fa-box-open text-4xl mb-3"></i><p>Belum ada e-book yang dibeli.</p></div>';
+                } else {
+                    keys.forEach(id => {
+                        const prod = appState.productCache[id];
+                        const title = prod && prod.title ? prod.title : `E-Book (ID: ${id.substring(0,8)}...)`;
+                        let img = "https://placehold.co/100x150/1e293b/94a3b8?text=Berkas";
+                        if (prod && prod.cover_url && prod.cover_url.trim() !== "") {
+                            img = `https://wsrv.nl/?url=${prod.cover_url.replace("i.ibb.co", "i.ibb.co.com")}&w=100&output=webp`;
+                        }
+                        const downloadUrl = `${API_BASE_URL}/download/${id}?fingerprint=${appState.fingerprint}`;
+                        
+                        list.innerHTML += `
+                            <div class="flex items-center gap-3 bg-white/[0.03] p-3 rounded-xl border border-white/5 hover:bg-white/[0.06] transition-colors">
+                                <img src="${img}" loading="lazy" class="w-12 h-16 object-cover rounded shadow border border-white/10">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-white text-xs md:text-sm font-bold truncate mb-1">${title}</h4>
+                                    <a href="${downloadUrl}" target="_blank" class="inline-block text-[10px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-3 py-1.5 rounded-full hover:bg-cyan-500 hover:text-white transition-colors">
+                                        <i class="fa-solid fa-download mr-1"></i> Unduh Berkas
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                popup.classList.remove('hidden'); popup.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            } else {
+                popup.classList.add('hidden'); popup.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        let searchTimeout;
+        function debounceSearch(query) {
+            clearTimeout(searchTimeout);
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (query.trim() !== "") clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+            searchTimeout = setTimeout(() => { executeSearch(query); }, 300);
+        }
+
+        function clearDesktopSearch() {
+            document.getElementById('desktopSearch').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            executeSearch('');
+        }
+
+        function executeSearch(query) {
+            appState.currentSearch = query.trim();
+            appState.currentPage = 1;
+            document.getElementById('desktopSearch').value = query;
+            document.getElementById('mobileSearchInput').value = query;
+
+            if (query !== "") {
+                document.querySelectorAll('.category-btn').forEach((btn, index) => {
+                    if(index === 0) { btn.classList.add('text-cyan-400', 'font-bold'); btn.classList.remove('text-white/70'); } 
+                    else { btn.classList.remove('text-cyan-400', 'font-bold'); btn.classList.add('text-white/70'); }
+                });
+                appState.currentKategori = "";
+            }
+            fetchProducts(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterByCategory(kategori, btnElement) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('text-cyan-400', 'font-bold');
+                btn.classList.add('text-white/70');
+            });
+            btnElement.classList.remove('text-white/70');
+            btnElement.classList.add('text-cyan-400', 'font-bold');
+            
+            document.getElementById('desktopSearch').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            
+            appState.currentSearch = "";
+            appState.currentKategori = kategori;
+            appState.currentPage = 1;
+            
+            fetchProducts(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function loadMore() { appState.currentPage++; fetchProducts(true); }
+
+        function bukaPopup(productId) {
+            const product = appState.productCache[productId];
+            if (!product) return;
+
+            let safeImg = "https://placehold.co/300x450/1e293b/94a3b8?text=No+Cover";
+            if (product.cover_url && product.cover_url.trim() !== "") {
+                safeImg = `https://wsrv.nl/?url=${product.cover_url.replace("i.ibb.co", "i.ibb.co.com")}&w=300&output=webp`;
+            }
+
+            const linkSample = `${API_BASE_URL}/sample/${product.id}`;
+            const deskripsi = (product.deskripsi || "Tidak ada deskripsi.").replace(/\n/g, '<br>');
+
+            document.getElementById('popImg').src = safeImg;
+            document.getElementById('popKategori').innerText = product.kategori || 'UMUM';
+            document.getElementById('popJudul').innerText = product.title || 'Tanpa Judul';
+            document.getElementById('popDeskripsi').innerHTML = deskripsi;
+            document.getElementById('popSampleBtn').href = linkSample;
+
+            const popup = document.getElementById('popupDetail');
+            popup.classList.remove('hidden'); 
+            popup.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function tutupPopup() {
+            const popup = document.getElementById('popupDetail');
+            popup.classList.add('hidden'); popup.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        function tutupPopupOverlay(event) { if (event.target.id === 'popupDetail') tutupPopup(); }
+
+        function toggleMobileSearch() {
+            const fab = document.getElementById('mobileSearchFab');
+            const input = document.getElementById('mobileSearchInput');
+            if (fab.classList.contains('expanded')) {
+                fab.classList.remove('expanded'); input.blur();
+                if(input.value.trim() !== '') executeSearch(''); 
+            } else {
+                fab.classList.add('expanded'); setTimeout(() => input.focus(), 300);
+            }
+        }
+
+        function toggleSupportMenu() {
+            const menu = document.getElementById('supportMenu');
+            const icon = document.getElementById('supportIcon');
+            if (menu.classList.contains('opacity-0')) {
+                menu.classList.remove('opacity-0', 'invisible', 'scale-95'); menu.classList.add('opacity-100', 'visible', 'scale-100'); icon.classList.add('rotate-180');
+            } else {
+                menu.classList.add('opacity-0', 'invisible', 'scale-95'); menu.classList.remove('opacity-100', 'visible', 'scale-100'); icon.classList.remove('rotate-180');
+            }
+        }
+
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('supportMenu');
+            const btn = document.getElementById('supportBtn');
+            const icon = document.getElementById('supportIcon');
+            if (menu && btn && !menu.contains(event.target) && !btn.contains(event.target)) {
+                menu.classList.add('opacity-0', 'invisible', 'scale-95'); menu.classList.remove('opacity-100', 'visible', 'scale-100'); icon.classList.remove('rotate-180');
+            }
+        });
+
+        // ==========================================
+        // PROSES PEMBAYARAN TANPA POP-UP ALERT
+        // ==========================================
+        async function processCheckout(productId, btnElement) {
+            const btn = btnElement || document.getElementById(`btn-${productId}`);
+            if (!btn) return;
+
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Proses...';
+                btn.disabled = true;
+
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                await new Promise(resolve => setTimeout(resolve, 50));
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+                const response = await fetch(`${API_BASE_URL}/checkout`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_id: productId, fingerprint: appState.fingerprint }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId); 
+
+                const data = await response.json();
+                
+                if (response.ok && data.qr_string) {
+                    appState.pendingProductId = productId; 
+                    appState.currentOrderId = data.order_id;
+                    
+                    const btnSimulate = document.getElementById('btnSimulate');
+                    if(btnSimulate) {
+                        btnSimulate.innerHTML = 'Simulasikan pembayaran';
+                        btnSimulate.disabled = false;
+                    }
+
+                    showQrisPopup(data.qr_string, data.total_payment);
+                } else {
+                    // Terjadi masalah di server, kembalikan tombol secara diam-diam
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                // Koneksi terputus atau gagal, kembalikan tombol secara diam-diam
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function triggerSimulation() {
+            if (!appState.currentOrderId) return;
+            
+            const btn = document.getElementById('btnSimulate');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Webhook...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/simulate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order_id: appState.currentOrderId })
+                });
+
+                if (response.ok) {
+                    btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Simulasi sukses, menunggu auto-refresh...';
+                } else {
+                    // Gagal, kembalikan tombol tanpa alert
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                // Gagal, kembalikan tombol tanpa alert
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function showQrisPopup(qrString, totalPayment) {
+            document.getElementById('qrisTotal').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalPayment);
+            
+            const qrisContainer = document.getElementById('qrisCodeContainer');
+            qrisContainer.innerHTML = ''; 
+            new QRCode(qrisContainer, {
+                text: qrString,
+                width: 184, 
+                height: 184,
+                colorDark : "#0f172a", 
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            const popup = document.getElementById('qrisPopup');
+            popup.classList.remove('hidden'); 
+            popup.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            qrisCheckInterval = setInterval(() => {
+                refreshStatusDiamDiam();
+            }, 3000);
+        }
+
+        function closeQrisPopup() {
+            const popup = document.getElementById('qrisPopup');
+            popup.classList.add('hidden'); 
+            popup.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+            
+            if (qrisCheckInterval) {
+                clearInterval(qrisCheckInterval);
+                qrisCheckInterval = null;
+            }
+
+            document.querySelectorAll('button[id^="btn-"]').forEach(btn => {
+                if (btn.innerHTML.includes('Proses') || btn.disabled) {
+                    btn.innerHTML = 'Beli Sekarang';
+                    btn.disabled = false;
+                }
+            });
+            appState.pendingProductId = null;
+            appState.currentOrderId = null;
+        }
+
+        function showSuccessPopup() {
+            const popup = document.getElementById('successPopup');
+            popup.classList.remove('hidden');
+            popup.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSuccessPopup() {
+            const popup = document.getElementById('successPopup');
+            popup.classList.add('hidden');
+            popup.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeSuccessPopupOverlay(event) {
+            if (event.target.id === 'successPopup') closeSuccessPopup();
+        }
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") refreshStatusDiamDiam();
+        });
+        window.addEventListener("pageshow", (event) => {
+            if (event.persisted) refreshStatusDiamDiam();
+        });
+
+        async function refreshStatusDiamDiam() {
+            if (!appState.fingerprint) return;
+            try {
+                const response = await fetch(`${API_BASE_URL}/purchases`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fingerprint: appState.fingerprint })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    appState.purchasedMap = data.purchases || {};
+                    
+                    if (appState.pendingProductId && appState.purchasedMap[appState.pendingProductId]) {
+                        closeQrisPopup(); 
+                        updatePurchaseButtons();
+                        updateDownloadBubble();
+
+                        setTimeout(() => {
+                            showSuccessPopup();
+                        }, 500);
+                    } else {
+                        updatePurchaseButtons();
+                        updateDownloadBubble();
+                    }
+                }
+            } catch (e) {}
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initializeApp();
+        });
+    </script>
+</body>
+</html>

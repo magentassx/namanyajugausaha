@@ -61,9 +61,7 @@
 </head>
 <body class="text-slate-200 font-sans antialiased relative min-h-screen bg-[#050b14] pb-20 md:pb-0 overflow-x-hidden">
 
-    <!-- WIDGET CLOUDFLARE TURNSTILE (GAIB/INVISIBLE) -->
-    <!-- GANTI '1x00000000000000000000AA' DENGAN SITE KEY CLOUDFLARE ANDA NANTI -->
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAEOsseLWOCKcQR8L" data-callback="onTurnstileSuccess"></div>
+    <!-- WIDGET CLOUDFLARE TURNSTILE DIHAPUS DARI SINI KARENA PINDAH KE POP-UP DI BAWAH -->
 
     <div class="fixed inset-0 z-[-2] bg-[#050b14] pointer-events-none">
         <div class="blob-base color-1 w-[120vw] h-[120vw] md:w-[70vw] md:h-[70vw]"></div>
@@ -127,6 +125,20 @@
         <div class="fab-icon-box" onclick="toggleMobileSearch()"><i class="fa-solid fa-magnifying-glass text-white text-lg"></i></div>
         <input type="text" id="mobileSearchInput" oninput="debounceSearch(this.value)" class="search-input-mobile" placeholder="Cari judul atau kategori...">
         <div class="fab-close-btn" onclick="toggleMobileSearch()"><i class="fa-solid fa-xmark text-white/70 text-lg hover:text-white transition-colors"></i></div>
+    </div>
+
+    <!-- POP-UP CLOUDFLARE TURNSTILE (TENGAH LAYAR) -->
+    <div id="cf-popup" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/80 backdrop-blur-sm" style="transform: translateZ(0);">
+        <div class="bg-[#0f172a] p-6 rounded-2xl border border-white/10 shadow-[0_15px_50px_rgba(0,0,0,0.8)] flex flex-col items-center popup-scale">
+            <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                <i class="fa-solid fa-shield-halved text-2xl text-cyan-400"></i>
+            </div>
+            <h3 class="text-white text-base font-bold mb-1">Verifikasi Keamanan</h3>
+            <p class="text-white/50 text-xs mb-5 text-center px-2">Memastikan koneksi Anda aman...</p>
+            
+            <!-- GANTI '0x4AAAAAAEOsseLWOCKcQR8L' DENGAN SITE KEY ANDA -->
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAAEOsseLWOCKcQR8L" data-callback="onTurnstileSuccess"></div>
+        </div>
     </div>
 
     <!-- POP-UP DETAIL PRODUK -->
@@ -245,10 +257,23 @@
         };
 
         let qrisCheckInterval; 
+        let pendingProductId = null;
+        let pendingCheckoutBtn = null;
 
-        // Fungsi yang dipanggil otomatis oleh Cloudflare ketika pengecekan berhasil
+        // FUNGSI BARU: onTurnstileSuccess yang bisa mereset otomatis
         function onTurnstileSuccess(token) {
             appState.cfToken = token;
+            
+            // 1. Sembunyikan Pop-up Cloudflare
+            const cfPopup = document.getElementById('cf-popup');
+            cfPopup.classList.add('hidden');
+            cfPopup.classList.remove('flex');
+            
+            // 2. Lanjutkan otomatis proses bayar yang tertunda
+            if (pendingProductId && pendingCheckoutBtn) {
+                secureApp.checkoutLock = false; 
+                processCheckout(pendingProductId, pendingCheckoutBtn);
+            }
         }
 
         async function initializeApp() {
@@ -623,11 +648,22 @@
             const btn = btnElement || document.getElementById(`btn-${productId}`);
             if (!btn) { secureApp.checkoutLock = false; return; }
 
-            // Cek apakah token Cloudflare sudah di-generate oleh Widget Gaib
+            // MODIFIKASI: Panggil Pop-up Cloudflare jika belum ada token
             if (!appState.cfToken) {
-                alert("Sistem sedang memverifikasi koneksi Anda. Mohon tunggu 1 detik dan coba klik Beli lagi.");
+                pendingProductId = productId;
+                pendingCheckoutBtn = btn;
+                
+                const cfPopup = document.getElementById('cf-popup');
+                cfPopup.classList.remove('hidden');
+                cfPopup.classList.add('flex');
+                
+                // Reset widget agar menghasilkan token baru yang segar
+                if (window.turnstile) {
+                    window.turnstile.reset();
+                }
+                
                 secureApp.checkoutLock = false;
-                return;
+                return; // Berhenti di sini, fungsi onTurnstileSuccess akan melanjutkannya
             }
 
             const originalText = btn.innerHTML;
@@ -645,7 +681,6 @@
                 const response = await fetch(`${API_BASE_URL}/checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // MENGIRIM TOKEN CLOUDFLARE BERSAMAAN DENGAN PESANAN
                     body: JSON.stringify({ 
                         product_id: productId, 
                         fingerprint: appState.fingerprint,
@@ -683,6 +718,9 @@
                     window.turnstile.reset();
                     appState.cfToken = ""; 
                 }
+                // Bersihkan memori pesanan tertunda
+                pendingProductId = null;
+                pendingCheckoutBtn = null;
             }
         }
 

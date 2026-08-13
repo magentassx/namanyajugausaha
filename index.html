@@ -31,17 +31,21 @@
         @keyframes sweep3 { 0% { transform: translate3d(-20vw, 80vh, 0) scale(0.9); } 33% { transform: translate3d(70vw, 10vh, 0) scale(1.4); } 66% { transform: translate3d(10vw, 60vh, 0) scale(1); } 100% { transform: translate3d(90vw, -30vh, 0) scale(1.2); } }
         @keyframes sweep4 { 0% { transform: translate3d(90vw, -20vh, 0) scale(1.3); } 33% { transform: translate3d(-10vw, 70vh, 0) scale(0.9); } 66% { transform: translate3d(60vw, 90vh, 0) scale(1.1); } 100% { transform: translate3d(-30vw, 10vh, 0) scale(1.4); } }
 
-        .blob-base { position: absolute; will-change: transform; animation-iteration-count: infinite; animation-direction: alternate; animation-timing-function: ease-in-out; }
+        /* OPTIMASI PERFORMA: Hardware Acceleration untuk Animasi Background agar tidak membuat HP panas */
+        .blob-base { position: absolute; will-change: transform; animation-iteration-count: infinite; animation-direction: alternate; animation-timing-function: ease-in-out; -webkit-backface-visibility: hidden; backface-visibility: hidden; perspective: 1000px; transform: translateZ(0); }
         .color-1 { background: radial-gradient(circle, rgba(219,39,119,0.7) 0%, rgba(219,39,119,0) 70%); animation-name: sweep1; animation-duration: 13s; }
         .color-2 { background: radial-gradient(circle, rgba(6,182,212,0.7) 0%, rgba(6,182,212,0) 70%); animation-name: sweep2; animation-duration: 15s; }
         .color-3 { background: radial-gradient(circle, rgba(124,58,237,0.7) 0%, rgba(124,58,237,0) 70%); animation-name: sweep3; animation-duration: 19s; }
         .color-4 { background: radial-gradient(circle, rgba(16,185,129,0.7) 0%, rgba(16,185,129,0) 70%); animation-name: sweep4; animation-duration: 23s; }
 
-        .glass-panel { background: rgba(20, 25, 40, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(25, 30, 45, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); transform: translateZ(0); transition: transform 0.2s ease, box-shadow 0.2s ease; content-visibility: auto; }
+        /* OPTIMASI PERFORMA: Memisahkan Glass Panel ke layer komposit GPU sendiri agar saat di-scroll tidak lag */
+        .glass-panel { background: rgba(20, 25, 40, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); transform: translate3d(0, 0, 0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+        
+        /* OPTIMASI PERFORMA: Containment Paint Layout agar saat memuat puluhan kartu, browser HP tidak ngos-ngosan */
+        .glass-card { background: rgba(25, 30, 45, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); transform: translate3d(0, 0, 0); transition: transform 0.2s ease, box-shadow 0.2s ease; content-visibility: auto; contain: paint layout; will-change: transform; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
         .glass-card:hover { transform: translate3d(0, -4px, 0); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); background: rgba(35, 40, 55, 0.98); }
 
-        .search-fab-container { position: fixed; bottom: 1.5rem; right: 1.5rem; height: 3.5rem; width: 3.5rem; border-radius: 9999px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 90; overflow: hidden; display: flex; align-items: center; background: rgba(20, 25, 40, 0.95); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
+        .search-fab-container { position: fixed; bottom: 1.5rem; right: 1.5rem; height: 3.5rem; width: 3.5rem; border-radius: 9999px; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 90; overflow: hidden; display: flex; align-items: center; background: rgba(20, 25, 40, 0.95); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.6); transform: translate3d(0,0,0); will-change: width; }
         .search-fab-container.expanded { width: calc(100vw - 3rem); max-width: 24rem; }
         .search-input-mobile { width: 100%; background: transparent; border: none; color: white; padding-left: 3.5rem; padding-right: 3rem; outline: none; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .search-fab-container.expanded .search-input-mobile { opacity: 1; pointer-events: auto; }
@@ -50,10 +54,11 @@
         .fab-close-btn { right: 0; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .search-fab-container.expanded .fab-close-btn { opacity: 1; pointer-events: auto; }
         
-        .popup-scale { animation: popScale 0.3s ease-out forwards; }
+        /* OPTIMASI PERFORMA: Muluskan animasi Pop-up dengan Will-Change opacity */
+        .popup-scale { animation: popScale 0.3s ease-out forwards; will-change: transform, opacity; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
         @keyframes popScale { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes floatBubble { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-8px) scale(1.02); } }
-        .animate-float { animation: floatBubble 3s ease-in-out infinite; }
+        .animate-float { animation: floatBubble 3s ease-in-out infinite; will-change: transform; }
     </style>
 </head>
 <body class="text-slate-200 font-sans antialiased relative min-h-screen bg-[#050b14] pb-20 md:pb-0 overflow-x-hidden">
@@ -84,7 +89,6 @@
                     </button>
                     <div id="supportMenu" class="absolute right-0 mt-2 w-44 opacity-0 invisible scale-95 transition-all duration-300 transform origin-top-right z-[100]">
                         <div class="bg-[#0a0a0a] rounded-xl overflow-hidden py-1 border border-white/20 shadow-[0_15px_50px_rgba(0,0,0,0.8)]">
-                            <!-- PROTEKSI: Tambahan rel="noopener noreferrer" untuk mencegah Tabnabbing -->
                             <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" class="flex items-center px-4 py-3 hover:bg-white/10 transition-colors"><i class="fa-brands fa-whatsapp text-emerald-400 text-lg mr-3"></i><span class="text-white/90 text-xs font-bold tracking-wide">WhatsApp</span></a>
                             <div class="h-px w-full bg-white/10"></div>
                             <a href="https://t.me/sanlucid" target="_blank" rel="noopener noreferrer" class="flex items-center px-4 py-3 hover:bg-white/10 transition-colors"><i class="fa-brands fa-telegram text-blue-400 text-lg mr-3"></i><span class="text-white/90 text-xs font-bold tracking-wide">Telegram</span></a>
@@ -96,7 +100,7 @@
         
         <div class="border-t border-white/[0.08]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div id="categoryContainer" class="flex space-x-6 overflow-x-auto py-3 scrollbar-hide text-xs font-medium tracking-wide"></div>
+                <div id="categoryContainer" class="flex space-x-6 overflow-x-auto py-3 scrollbar-hide text-xs font-medium tracking-wide" style="-webkit-overflow-scrolling: touch;"></div>
             </div>
         </div>
     </nav>
@@ -124,7 +128,7 @@
     </div>
 
     <!-- POP-UP DETAIL PRODUK -->
-    <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="tutupPopupOverlay(event)">
+    <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="tutupPopupOverlay(event)" style="transform: translateZ(0);">
         <div class="flex flex-col items-center w-full max-w-sm" style="max-height: 95vh;">
             <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full flex flex-col overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.6)] popup-scale relative" style="max-height: calc(95vh - 70px);">
                 <div class="pt-5 pb-3 px-4 flex flex-col items-center text-center shrink-0 border-b border-white/5">
@@ -132,11 +136,10 @@
                     <span id="popKategori" class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mb-1"></span>
                     <h3 id="popJudul" class="text-base font-bold text-white leading-tight"></h3>
                 </div>
-                <div class="p-4 overflow-y-auto grow text-sm text-white/70 leading-relaxed text-justify">
+                <div class="p-4 overflow-y-auto grow text-sm text-white/70 leading-relaxed text-justify" style="-webkit-overflow-scrolling: touch;">
                     <p id="popDeskripsi"></p>
                 </div>
                 <div class="p-4 bg-white/[0.03] border-t border-white/10 shrink-0">
-                    <!-- PROTEKSI: Rel Noopener -->
                     <a id="popSampleBtn" href="#" target="_blank" rel="noopener noreferrer" class="block w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-center text-sm font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                         <i class="fa-solid fa-file-pdf mr-2"></i> Baca Free Sample
                     </a>
@@ -149,18 +152,18 @@
     </div>
 
     <!-- POP-UP DAFTAR UNDUHAN SAYA -->
-    <div id="libraryPopup" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="if(event.target.id==='libraryPopup') toggleLibraryPopup()">
+    <div id="libraryPopup" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="if(event.target.id==='libraryPopup') toggleLibraryPopup()" style="transform: translateZ(0);">
         <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-md flex flex-col overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.8)] popup-scale relative" style="max-height: 85vh;">
             <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/[0.02] shrink-0">
                 <h2 class="text-white font-bold text-base md:text-lg"><i class="fa-solid fa-box-open text-cyan-400 mr-2"></i>E-Book Saya</h2>
                 <button onclick="toggleLibraryPopup()" class="text-white/50 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div id="libraryList" class="p-4 overflow-y-auto grow flex flex-col gap-3"></div>
+            <div id="libraryList" class="p-4 overflow-y-auto grow flex flex-col gap-3" style="-webkit-overflow-scrolling: touch;"></div>
         </div>
     </div>
 
     <!-- POP-UP PEMBAYARAN QRIS -->
-    <div id="qrisPopup" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div id="qrisPopup" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md" style="transform: translateZ(0);">
         <div class="bg-[#f8f9fa] rounded-3xl w-full max-w-sm flex flex-col overflow-hidden items-center p-6 text-slate-800 shadow-[0_0_50px_rgba(6,182,212,0.3)] popup-scale relative border-4 border-cyan-500/20">
             <div class="w-full flex justify-between items-center mb-4">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" alt="QRIS" class="h-6">
@@ -188,7 +191,7 @@
     </div>
 
     <!-- POP-UP SUKSES PEMBAYARAN -->
-    <div id="successPopup" class="fixed inset-0 z-[130] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="closeSuccessPopupOverlay(event)">
+    <div id="successPopup" class="fixed inset-0 z-[130] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="closeSuccessPopupOverlay(event)" style="transform: translateZ(0);">
         <div class="bg-[#0f172a] border border-emerald-500/30 rounded-2xl w-full max-w-sm flex flex-col items-center p-6 text-center shadow-[0_0_40px_rgba(16,185,129,0.2)] popup-scale relative">
             <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
                 <i class="fa-solid fa-check text-3xl text-emerald-400"></i>
@@ -204,7 +207,6 @@
     </div>
 
     <script>
-        // PROTEKSI UTAMA: Defense-in-Depth Core Functions
         const secureApp = {
             escapeHTML: (str) => {
                 if (typeof str !== 'string') return '';
@@ -217,11 +219,10 @@
             },
             sanitizeInput: (str) => {
                 if (typeof str !== 'string') return '';
-                // Menghapus tag script/HTML berbahaya dari payload pencarian
                 return str.replace(/[<>]/g, '').substring(0, 100);
             },
-            checkoutLock: false, // Mencegah form spamming/race conditions
-            pollAttempts: 0 // Pembatas request untuk menghemat TiDB
+            checkoutLock: false,
+            pollAttempts: 0 
         };
 
         const API_BASE_URL = "https://backendrust.onrender.com/api";
@@ -243,7 +244,6 @@
         let qrisCheckInterval; 
 
         async function initializeApp() {
-            // PROTEKSI: Insecure Deserialization Handling via Try-Catch Strict Validation
             try {
                 if (window.localStorage) {
                     const savedCache = window.localStorage.getItem('sanlucid_product_cache');
@@ -266,9 +266,7 @@
                 if (window.localStorage) {
                     window.localStorage.setItem('sanlucid_product_cache', JSON.stringify(appState.productCache));
                 }
-            } catch(e) {
-                // Biarkan hening jika diblokir oleh browser
-            }
+            } catch(e) {}
         }
 
         async function fetchCategories() {
@@ -279,7 +277,6 @@
                     const container = document.getElementById('categoryContainer');
                     let html = `<button onclick="filterByCategory('', this)" class="category-btn text-cyan-400 whitespace-nowrap font-bold">Semua E-Book</button>`;
                     cats.forEach(cat => {
-                        // PROTEKSI: Sanitasi variabel ke DOM (XSS Prevention)
                         const safeCat = secureApp.escapeHTML(cat);
                         html += `<button onclick="filterByCategory('${safeCat}', this)" class="category-btn text-white/70 hover:text-white whitespace-nowrap transition-colors uppercase">${safeCat}</button>`;
                     });
@@ -334,12 +331,12 @@
         }
 
         function renderCards(productsArray, gridElement) {
+            // OPTIMASI PERFORMA: DocumentFragment mencegah layout thrashing saat merender banyak kartu
             const fragment = document.createDocumentFragment();
 
             productsArray.forEach(product => {
                 appState.productCache[product.id] = product;
                 
-                // PROTEKSI: DOM-based XSS Sanitization Data API Server
                 const safeTitle = secureApp.escapeHTML(product.title || 'Tanpa Judul');
                 const safeKategori = secureApp.escapeHTML(product.kategori || 'UMUM');
                 const isPurchased = appState.purchasedMap[product.id];
@@ -347,7 +344,6 @@
                 
                 let safeImg = "https://placehold.co/300x450/1e293b/94a3b8?text=No+Cover";
                 if (product.cover_url && product.cover_url.trim() !== "") {
-                    // Mencegah SSRF via injection parameter di wsrv.nl
                     const sanitizedClientUrl = secureApp.sanitizeURL(product.cover_url).replace("i.ibb.co", "i.ibb.co.com");
                     safeImg = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=300&output=webp`;
                 }
@@ -355,7 +351,6 @@
                 const masterDownloadUrl = `${API_BASE_URL}/download/${product.id}?fingerprint=${encodeURIComponent(appState.fingerprint)}`;
                 const actionPopup = `bukaPopup('${product.id}')`;
 
-                // PROTEKSI: Tabnabbing dengan noopener noreferrer
                 const buttonHtml = isPurchased 
                     ? `<a href="${masterDownloadUrl}" target="_blank" rel="noopener noreferrer" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`
                     : `<button id="btn-${product.id}" onclick="processCheckout('${product.id}', this)" class="w-full py-2 bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 text-[10px] md:text-xs font-semibold rounded-xl transition-colors">Beli Sekarang</button>`;
@@ -393,7 +388,7 @@
                 if (window.localStorage) savedId = window.localStorage.getItem('sanlucid_device_id');
             } catch(e) {}
             
-            if (savedId && savedId.length < 100) { // Limit length to avoid massive string payloads
+            if (savedId && savedId.length < 100) { 
                 appState.fingerprint = savedId;
             } else {
                 try {
@@ -463,7 +458,6 @@
                 } else {
                     keys.forEach(id => {
                         const prod = appState.productCache[id];
-                        // PROTEKSI: DOM Sanitization sebelum Inject Array HTML
                         const rawTitle = prod && prod.title ? prod.title : `E-Book (ID: ${id.substring(0,8)}...)`;
                         const safeTitle = secureApp.escapeHTML(rawTitle);
                         let img = "https://placehold.co/100x150/1e293b/94a3b8?text=Berkas";
@@ -509,7 +503,6 @@
         }
 
         function executeSearch(query) {
-            // PROTEKSI: Parameter Tampering & Payload Bomb Handling
             const safeQuery = secureApp.sanitizeInput(query);
             appState.currentSearch = safeQuery.trim();
             appState.currentPage = 1;
@@ -541,7 +534,6 @@
             document.getElementById('clearSearchBtn').classList.add('hidden');
             
             appState.currentSearch = "";
-            // PROTEKSI: Kategori Escape HTML
             appState.currentKategori = secureApp.escapeHTML(kategori);
             appState.currentPage = 1;
             
@@ -555,7 +547,6 @@
             const product = appState.productCache[productId];
             if (!product) return;
 
-            // PROTEKSI: XSS Sanitization sebelum DOM rendering InnerHTML
             let safeImg = "https://placehold.co/300x450/1e293b/94a3b8?text=No+Cover";
             if (product.cover_url && product.cover_url.trim() !== "") {
                 safeImg = `https://wsrv.nl/?url=${encodeURIComponent(secureApp.sanitizeURL(product.cover_url).replace("i.ibb.co", "i.ibb.co.com"))}&w=300&output=webp`;
@@ -615,11 +606,7 @@
             }
         });
 
-        // ==========================================
-        // PROSES PEMBAYARAN TANPA POP-UP ALERT
-        // ==========================================
         async function processCheckout(productId, btnElement) {
-            // PROTEKSI: Mencegah Race Condition & Double Click Spam Request
             if (secureApp.checkoutLock) return;
             secureApp.checkoutLock = true;
 
@@ -668,7 +655,7 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             } finally {
-                secureApp.checkoutLock = false; // Buka kembali penguncian setelah semua beres
+                secureApp.checkoutLock = false; 
             }
         }
 
@@ -722,17 +709,15 @@
             popup.classList.add('flex');
             document.body.style.overflow = 'hidden';
 
-            // PROTEKSI: Mencegah TiDB Timeout/Limit Drain Attack
             secureApp.pollAttempts = 0;
             qrisCheckInterval = setInterval(() => {
                 secureApp.pollAttempts++;
-                // Berhenti polling setelah 10 menit (120 percobaan x 5000ms) untuk menghemat RU Database
                 if (secureApp.pollAttempts > 120) {
                     closeQrisPopup();
                     return;
                 }
                 refreshStatusDiamDiam();
-            }, 5000); // Waktu diundur jadi 5 detik untuk menghemat beban Render & Kuota TiDB Gratisan
+            }, 5000); 
         }
 
         function closeQrisPopup() {

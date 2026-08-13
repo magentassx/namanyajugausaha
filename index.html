@@ -141,27 +141,50 @@
         </div>
     </div>
 
-    <!-- POP-UP DETAIL PRODUK -->
-    <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="tutupPopupOverlay(event)" style="transform: translateZ(0);">
-        <div class="flex flex-col items-center w-full max-w-sm" style="max-height: 95vh;">
-            <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full flex flex-col overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.6)] popup-scale relative" style="max-height: calc(95vh - 70px);">
-                <div class="pt-5 pb-3 px-4 flex flex-col items-center text-center shrink-0 border-b border-white/5">
-                    <img id="popImg" src="" loading="lazy" decoding="async" alt="Cover Detail" class="w-24 md:w-28 h-auto object-cover rounded-lg shadow-lg mb-3 border border-white/10">
-                    <span id="popKategori" class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mb-1"></span>
-                    <h3 id="popJudul" class="text-base font-bold text-white leading-tight"></h3>
+    <!-- POP-UP DETAIL PRODUK (DESAIN PREMIUM) -->
+    <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="tutupPopupOverlay(event)" style="transform: translateZ(0);">
+        <div class="relative w-full max-w-sm" style="max-height: 90vh;">
+            
+            <!-- Tombol Close Melayang di Kanan Atas -->
+            <button onclick="tutupPopup()" class="absolute -top-3 -right-3 z-50 bg-rose-500 hover:bg-rose-400 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-[0_4px_15px_rgba(244,63,94,0.5)] border border-white/20 transition-all popup-scale hover:scale-110">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Card Utama Glassmorphism -->
+            <div class="bg-[#0a0f1d]/95 backdrop-blur-xl border border-white/10 rounded-3xl w-full flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] popup-scale relative" style="max-height: calc(90vh - 20px);">
+                
+                <!-- Efek Cahaya (Glow) Latar Belakang -->
+                <div class="absolute top-0 w-full h-48 bg-gradient-to-b from-cyan-600/20 to-transparent pointer-events-none"></div>
+                <div class="absolute top-[-50px] left-1/2 -translate-x-1/2 w-48 h-48 bg-cyan-500/30 blur-[60px] rounded-full pointer-events-none"></div>
+
+                <!-- Bagian Header (Cover & Judul) -->
+                <div class="relative pt-8 pb-5 px-5 flex flex-col items-center text-center shrink-0 border-b border-white/5">
+                    <img id="popImg" src="" loading="lazy" decoding="async" alt="Cover Detail" class="w-28 md:w-32 h-auto object-cover rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.6)] border border-white/10 mb-4 transition-transform duration-500 hover:scale-105">
+                    
+                    <!-- Kategori bergaya Badge Kapsul -->
+                    <span id="popKategori" class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest mb-3 shadow-sm"></span>
+                    
+                    <h3 id="popJudul" class="text-lg font-black text-white leading-tight drop-shadow-md"></h3>
                 </div>
-                <div class="p-4 overflow-y-auto grow text-sm text-white/70 leading-relaxed text-justify" style="-webkit-overflow-scrolling: touch;">
+
+                <!-- Bagian Deskripsi -->
+                <div class="p-5 overflow-y-auto grow text-sm text-white/70 leading-relaxed text-justify" style="-webkit-overflow-scrolling: touch;">
                     <p id="popDeskripsi"></p>
                 </div>
-                <div class="p-4 bg-white/[0.03] border-t border-white/10 shrink-0">
-                    <a id="popSampleBtn" href="#" target="_blank" rel="noopener noreferrer" class="block w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white text-center text-sm font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                        <i class="fa-solid fa-file-pdf mr-2"></i> Baca Free Sample
+
+                <!-- Bagian Tombol Baca Free Sample -->
+                <div class="p-5 bg-gradient-to-t from-[#050b14] to-transparent border-t border-white/5 shrink-0">
+                    <a id="popSampleBtn" href="#" target="_blank" rel="noopener noreferrer" class="relative flex items-center justify-center w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold rounded-2xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] overflow-hidden group">
+                        
+                        <!-- Efek Kilap / Shimmer saat di-hover -->
+                        <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out"></div>
+                        
+                        <!-- Ikon Buku -->
+                        <i class="fa-solid fa-book-open-reader mr-2 relative z-10"></i> 
+                        <span class="relative z-10 tracking-wide">Baca Free Sample</span>
                     </a>
                 </div>
             </div>
-            <button onclick="tutupPopup()" class="mt-4 bg-red-500 hover:bg-red-400 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-[0_4px_15px_rgba(239,68,68,0.5)] border border-white/20 transition-all shrink-0 popup-scale">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
         </div>
     </div>
 

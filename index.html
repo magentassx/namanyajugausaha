@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- PROTEKSI: Security Meta Headers (CSP, Anti-MIME Sniffing, Referrer Policy) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://backendrust.onrender.com https://*.fpjscdn.net; img-src 'self' data: https://wsrv.nl https://placehold.co https://upload.wikimedia.org; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com;">
+    <!-- PROTEKSI: Security Meta Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://backendrust.onrender.com https://*.fpjscdn.net https://challenges.cloudflare.com; img-src 'self' data: https://wsrv.nl https://placehold.co https://upload.wikimedia.org; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; frame-src https://challenges.cloudflare.com;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
@@ -19,6 +19,9 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- SCRIPT ANTI-BOT CLOUDFLARE TURNSTILE -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <style>
         ::-webkit-scrollbar { width: 8px; }
@@ -31,17 +34,13 @@
         @keyframes sweep3 { 0% { transform: translate3d(-20vw, 80vh, 0) scale(0.9); } 33% { transform: translate3d(70vw, 10vh, 0) scale(1.4); } 66% { transform: translate3d(10vw, 60vh, 0) scale(1); } 100% { transform: translate3d(90vw, -30vh, 0) scale(1.2); } }
         @keyframes sweep4 { 0% { transform: translate3d(90vw, -20vh, 0) scale(1.3); } 33% { transform: translate3d(-10vw, 70vh, 0) scale(0.9); } 66% { transform: translate3d(60vw, 90vh, 0) scale(1.1); } 100% { transform: translate3d(-30vw, 10vh, 0) scale(1.4); } }
 
-        /* OPTIMASI PERFORMA: Hardware Acceleration untuk Animasi Background agar tidak membuat HP panas */
         .blob-base { position: absolute; will-change: transform; animation-iteration-count: infinite; animation-direction: alternate; animation-timing-function: ease-in-out; -webkit-backface-visibility: hidden; backface-visibility: hidden; perspective: 1000px; transform: translateZ(0); }
         .color-1 { background: radial-gradient(circle, rgba(219,39,119,0.7) 0%, rgba(219,39,119,0) 70%); animation-name: sweep1; animation-duration: 13s; }
         .color-2 { background: radial-gradient(circle, rgba(6,182,212,0.7) 0%, rgba(6,182,212,0) 70%); animation-name: sweep2; animation-duration: 15s; }
         .color-3 { background: radial-gradient(circle, rgba(124,58,237,0.7) 0%, rgba(124,58,237,0) 70%); animation-name: sweep3; animation-duration: 19s; }
         .color-4 { background: radial-gradient(circle, rgba(16,185,129,0.7) 0%, rgba(16,185,129,0) 70%); animation-name: sweep4; animation-duration: 23s; }
 
-        /* OPTIMASI PERFORMA: Memisahkan Glass Panel ke layer komposit GPU sendiri agar saat di-scroll tidak lag */
         .glass-panel { background: rgba(20, 25, 40, 0.4); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); transform: translate3d(0, 0, 0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
-        
-        /* OPTIMASI PERFORMA: Containment Paint Layout agar saat memuat puluhan kartu, browser HP tidak ngos-ngosan */
         .glass-card { background: rgba(25, 30, 45, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); transform: translate3d(0, 0, 0); transition: transform 0.2s ease, box-shadow 0.2s ease; content-visibility: auto; contain: paint layout; will-change: transform; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
         .glass-card:hover { transform: translate3d(0, -4px, 0); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5); background: rgba(35, 40, 55, 0.98); }
 
@@ -54,7 +53,6 @@
         .fab-close-btn { right: 0; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .search-fab-container.expanded .fab-close-btn { opacity: 1; pointer-events: auto; }
         
-        /* OPTIMASI PERFORMA: Muluskan animasi Pop-up dengan Will-Change opacity */
         .popup-scale { animation: popScale 0.3s ease-out forwards; will-change: transform, opacity; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
         @keyframes popScale { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes floatBubble { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-8px) scale(1.02); } }
@@ -62,6 +60,10 @@
     </style>
 </head>
 <body class="text-slate-200 font-sans antialiased relative min-h-screen bg-[#050b14] pb-20 md:pb-0 overflow-x-hidden">
+
+    <!-- WIDGET CLOUDFLARE TURNSTILE (GAIB/INVISIBLE) -->
+    <!-- GANTI '1x00000000000000000000AA' DENGAN SITE KEY CLOUDFLARE ANDA NANTI -->
+    <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-size="invisible" data-callback="onTurnstileSuccess"></div>
 
     <div class="fixed inset-0 z-[-2] bg-[#050b14] pointer-events-none">
         <div class="blob-base color-1 w-[120vw] h-[120vw] md:w-[70vw] md:h-[70vw]"></div>
@@ -238,10 +240,16 @@
             hasMore: false,
             isLoading: false,
             pendingProductId: null,
-            currentOrderId: null
+            currentOrderId: null,
+            cfToken: "" // Menyimpan token Cloudflare
         };
 
         let qrisCheckInterval; 
+
+        // Fungsi yang dipanggil otomatis oleh Cloudflare ketika pengecekan berhasil
+        function onTurnstileSuccess(token) {
+            appState.cfToken = token;
+        }
 
         async function initializeApp() {
             try {
@@ -331,7 +339,6 @@
         }
 
         function renderCards(productsArray, gridElement) {
-            // OPTIMASI PERFORMA: DocumentFragment mencegah layout thrashing saat merender banyak kartu
             const fragment = document.createDocumentFragment();
 
             productsArray.forEach(product => {
@@ -606,12 +613,22 @@
             }
         });
 
+        // ==========================================
+        // PROSES PEMBAYARAN + CLOUDFLARE TURNSTILE
+        // ==========================================
         async function processCheckout(productId, btnElement) {
             if (secureApp.checkoutLock) return;
             secureApp.checkoutLock = true;
 
             const btn = btnElement || document.getElementById(`btn-${productId}`);
             if (!btn) { secureApp.checkoutLock = false; return; }
+
+            // Cek apakah token Cloudflare sudah di-generate oleh Widget Gaib
+            if (!appState.cfToken) {
+                alert("Sistem sedang memverifikasi koneksi Anda. Mohon tunggu 1 detik dan coba klik Beli lagi.");
+                secureApp.checkoutLock = false;
+                return;
+            }
 
             const originalText = btn.innerHTML;
             
@@ -628,7 +645,12 @@
                 const response = await fetch(`${API_BASE_URL}/checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_id: productId, fingerprint: appState.fingerprint }),
+                    // MENGIRIM TOKEN CLOUDFLARE BERSAMAAN DENGAN PESANAN
+                    body: JSON.stringify({ 
+                        product_id: productId, 
+                        fingerprint: appState.fingerprint,
+                        cf_token: appState.cfToken 
+                    }),
                     signal: controller.signal
                 });
 
@@ -656,6 +678,11 @@
                 btn.disabled = false;
             } finally {
                 secureApp.checkoutLock = false; 
+                // Me-reset widget Cloudflare untuk transaksi berikutnya
+                if (window.turnstile) {
+                    window.turnstile.reset();
+                    appState.cfToken = ""; 
+                }
             }
         }
 

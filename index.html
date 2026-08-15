@@ -61,8 +61,6 @@
 </head>
 <body class="text-slate-200 font-sans antialiased relative min-h-screen bg-[#050b14] pb-20 md:pb-0 overflow-x-hidden">
 
-    <!-- WIDGET CLOUDFLARE TURNSTILE DIHAPUS DARI SINI KARENA PINDAH KE POP-UP DI BAWAH -->
-
     <div class="fixed inset-0 z-[-2] bg-[#050b14] pointer-events-none">
         <div class="blob-base color-1 w-[120vw] h-[120vw] md:w-[70vw] md:h-[70vw]"></div>
         <div class="blob-base color-2 w-[110vw] h-[110vw] md:w-[65vw] md:h-[65vw]"></div>
@@ -135,8 +133,6 @@
             </div>
             <h3 class="text-white text-base font-bold mb-1">Verifikasi Keamanan</h3>
             <p class="text-white/50 text-xs mb-5 text-center px-2">Memastikan koneksi Anda aman...</p>
-            
-            <!-- GANTI '0x4AAAAAAEOsseLWOCKcQR8L' DENGAN SITE KEY ANDA -->
             <div class="cf-turnstile" data-sitekey="0x4AAAAAAEOsseLWOCKcQR8L" data-callback="onTurnstileSuccess"></div>
         </div>
     </div>
@@ -145,47 +141,33 @@
     <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="tutupPopupOverlay(event)" style="transform: translateZ(0);">
         <div class="flex flex-col items-center w-full max-w-sm" style="max-height: 95vh;">
             
-            <!-- Card Utama Glassmorphism -->
             <div class="bg-[#0a0f1d]/95 backdrop-blur-xl border border-white/10 rounded-3xl w-full flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] popup-scale relative" style="max-height: calc(95vh - 70px);">
                 
-                <!-- Efek Cahaya (Glow) Latar Belakang -->
                 <div class="absolute top-0 w-full h-48 bg-gradient-to-b from-cyan-600/20 to-transparent pointer-events-none"></div>
                 <div class="absolute top-[-50px] left-1/2 -translate-x-1/2 w-48 h-48 bg-cyan-500/30 blur-[60px] rounded-full pointer-events-none"></div>
 
-                <!-- Bagian Header (Cover & Judul) -->
                 <div class="relative pt-8 pb-5 px-5 flex flex-col items-center text-center shrink-0 border-b border-white/5">
                     <img id="popImg" src="" loading="lazy" decoding="async" alt="Cover Detail" class="w-28 md:w-32 h-auto object-cover rounded-xl shadow-[0_15px_30px_rgba(0,0,0,0.6)] border border-white/10 mb-4 transition-transform duration-500 hover:scale-105">
-                    
-                    <!-- Kategori bergaya Badge Kapsul -->
                     <span id="popKategori" class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest mb-3 shadow-sm"></span>
-                    
                     <h3 id="popJudul" class="text-lg font-black text-white leading-tight drop-shadow-md"></h3>
                 </div>
 
-                <!-- Bagian Deskripsi -->
                 <div class="p-5 overflow-y-auto grow text-sm text-white/70 leading-relaxed text-justify" style="-webkit-overflow-scrolling: touch;">
                     <p id="popDeskripsi"></p>
                 </div>
 
-                <!-- Bagian Tombol Baca Free Sample -->
                 <div class="p-5 bg-gradient-to-t from-[#050b14] to-transparent border-t border-white/5 shrink-0">
                     <a id="popSampleBtn" href="#" target="_blank" rel="noopener noreferrer" class="relative flex items-center justify-center w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold rounded-2xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] overflow-hidden group">
-                        
-                        <!-- Efek Kilap / Shimmer saat di-hover -->
                         <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out"></div>
-                        
-                        <!-- Ikon Buku -->
                         <i class="fa-solid fa-book-open-reader mr-2 relative z-10"></i> 
                         <span class="relative z-10 tracking-wide">Baca Free Sample</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Tombol Close Melayang di Bawah Tengah -->
             <button onclick="tutupPopup()" class="mt-5 z-50 bg-rose-500 hover:bg-rose-400 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-[0_4px_15px_rgba(244,63,94,0.5)] border border-white/20 transition-all popup-scale shrink-0 hover:scale-110">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-
         </div>
     </div>
 
@@ -277,23 +259,20 @@
             isLoading: false,
             pendingProductId: null,
             currentOrderId: null,
-            cfToken: "" // Menyimpan token Cloudflare
+            cfToken: "" 
         };
 
         let qrisCheckInterval; 
         let pendingProductId = null;
         let pendingCheckoutBtn = null;
 
-        // FUNGSI BARU: onTurnstileSuccess yang bisa mereset otomatis
         function onTurnstileSuccess(token) {
             appState.cfToken = token;
             
-            // 1. Sembunyikan Pop-up Cloudflare
             const cfPopup = document.getElementById('cf-popup');
             cfPopup.classList.add('hidden');
             cfPopup.classList.remove('flex');
             
-            // 2. Lanjutkan otomatis proses bayar yang tertunda
             if (pendingProductId && pendingCheckoutBtn) {
                 secureApp.checkoutLock = false; 
                 processCheckout(pendingProductId, pendingCheckoutBtn);
@@ -404,7 +383,12 @@
                     safeImg = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=300&output=webp`;
                 }
                 
-                const masterDownloadUrl = `${API_BASE_URL}/download/${product.id}?fingerprint=${encodeURIComponent(appState.fingerprint)}`;
+                // --- PERUBAHAN BASE64 ENKRIPSI ---
+                const dataRahasia = product.id + ":" + appState.fingerprint;
+                const enkripsi = btoa(dataRahasia);
+                const masterDownloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
+                // ---------------------------------
+                
                 const actionPopup = `bukaPopup('${product.id}')`;
 
                 const buttonHtml = isPurchased 
@@ -484,7 +468,11 @@
             Object.keys(appState.purchasedMap).forEach(productId => {
                 const btnContainer = document.getElementById(`container-btn-${productId}`);
                 if (btnContainer) {
-                    const masterDownloadUrl = `${API_BASE_URL}/download/${productId}?fingerprint=${encodeURIComponent(appState.fingerprint)}`;
+                    // --- PERUBAHAN BASE64 ENKRIPSI ---
+                    const dataRahasia = productId + ":" + appState.fingerprint;
+                    const enkripsi = btoa(dataRahasia);
+                    const masterDownloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
+                    // ---------------------------------
                     btnContainer.innerHTML = `<a href="${masterDownloadUrl}" target="_blank" rel="noopener noreferrer" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`;
                 }
             });
@@ -520,7 +508,12 @@
                         if (prod && prod.cover_url && prod.cover_url.trim() !== "") {
                             img = `https://wsrv.nl/?url=${encodeURIComponent(secureApp.sanitizeURL(prod.cover_url).replace("i.ibb.co", "i.ibb.co.com"))}&w=100&output=webp`;
                         }
-                        const downloadUrl = `${API_BASE_URL}/download/${id}?fingerprint=${encodeURIComponent(appState.fingerprint)}`;
+                        
+                        // --- PERUBAHAN BASE64 ENKRIPSI ---
+                        const dataRahasia = id + ":" + appState.fingerprint;
+                        const enkripsi = btoa(dataRahasia);
+                        const downloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
+                        // ---------------------------------
                         
                         list.innerHTML += `
                             <div class="flex items-center gap-3 bg-white/[0.03] p-3 rounded-xl border border-white/5 hover:bg-white/[0.06] transition-colors">
@@ -672,7 +665,6 @@
             const btn = btnElement || document.getElementById(`btn-${productId}`);
             if (!btn) { secureApp.checkoutLock = false; return; }
 
-            // MODIFIKASI: Panggil Pop-up Cloudflare jika belum ada token
             if (!appState.cfToken) {
                 pendingProductId = productId;
                 pendingCheckoutBtn = btn;
@@ -681,13 +673,12 @@
                 cfPopup.classList.remove('hidden');
                 cfPopup.classList.add('flex');
                 
-                // Reset widget agar menghasilkan token baru yang segar
                 if (window.turnstile) {
                     window.turnstile.reset();
                 }
                 
                 secureApp.checkoutLock = false;
-                return; // Berhenti di sini, fungsi onTurnstileSuccess akan melanjutkannya
+                return; 
             }
 
             const originalText = btn.innerHTML;
@@ -737,12 +728,10 @@
                 btn.disabled = false;
             } finally {
                 secureApp.checkoutLock = false; 
-                // Me-reset widget Cloudflare untuk transaksi berikutnya
                 if (window.turnstile) {
                     window.turnstile.reset();
                     appState.cfToken = ""; 
                 }
-                // Bersihkan memori pesanan tertunda
                 pendingProductId = null;
                 pendingCheckoutBtn = null;
             }

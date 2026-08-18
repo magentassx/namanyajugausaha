@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>L.I.S.A Clone - AI Storytelling Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #c9c9c9;
+            --text-color: #111111;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden; 
+        }
+
+        /* --- LOADER --- */
+        #loader {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: clamp(1rem, 2vw, 1.2rem); font-weight: 500; z-index: 11; transition: opacity 0.5s;
+        }
+
+        /* --- LAYAR INTRO KLIK --- */
+        #start-screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+
+        .start-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: bold;
+            color: #ffffff; 
+            background-color: rgba(0, 0, 0, 0.65);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            letter-spacing: 2px;
+            animation: blink 1.5s infinite alternate; 
+            display: none; 
+            white-space: nowrap;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+            100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); filter: drop-shadow(0 0 0px transparent); }
+        }
+
+        /* --- GLOBAL HEADER --- */
+        header { 
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: clamp(20px, 4vw, 40px) clamp(20px, 5vw, 50px);
+            z-index: 10;
+            pointer-events: none; 
+        }
+        .logo { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 500; pointer-events: auto; }
+
+        /* --- DIV PANEL KIRI --- */
+        #left-panel {
+            position: absolute; 
+            top: 0; left: 0;
+            width: 38%; 
+            height: 100%;
+            z-index: 3;
+            display: flex; flex-direction: column; justify-content: flex-start;
+            padding: clamp(20px, 5vw, 50px); 
+            padding-top: clamp(100px, 15vw, 140px); 
+            opacity: 0;
+            transition: opacity 1s ease 1s; 
+        }
+        #left-panel.visible { opacity: 1; }
+
+        .content {
+            width: 100%; 
+            max-width: 450px;
+            display: flex; 
+            flex-direction: column;
+            gap: clamp(15px, 3vw, 25px); 
+            max-height: 100%; 
+            overflow-y: auto;
+            padding-right: 15px; 
+            padding-bottom: 80px; 
+            margin: auto 0; 
+        }
+
+        .content::-webkit-scrollbar { width: 4px; }
+        .content::-webkit-scrollbar-track { background: transparent; }
+        .content::-webkit-scrollbar-thumb { background: rgba(17, 17, 17, 0.2); border-radius: 10px; }
+        .content::-webkit-scrollbar-thumb:hover { background: rgba(17, 17, 17, 0.5); }
+
+        /* --- DIV PANEL KANAN --- */
+        #right-panel {
+            position: absolute;
+            top: 0; right: 0;
+            width: 100%; 
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            transition: width 1.8s cubic-bezier(0.65, 0, 0.15, 1), height 1.8s cubic-bezier(0.65, 0, 0.15, 1);
+        }
+
+        #interactive-canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center; 
+            mix-blend-mode: multiply; 
+            transform: scale(2.5); 
+            transition: transform 1.8s cubic-bezier(0.65, 0, 0.15, 1); 
+        }
+        #interactive-canvas.zoomed-out { transform: scale(1); }
+
+        /* --- TYPOGRAPHY --- */
+        .subtitle-intro {
+            font-size: clamp(1rem, 2vw, 1.15rem); 
+            line-height: 1.6; 
+            color: #333; 
+            pointer-events: auto;
+            min-height: 55px; 
+            transition: filter 0.8s ease, opacity 0.8s ease; 
+        }
+
+        .blur-effect {
+            filter: blur(2.5px);
+            opacity: 0.4;
+        }
+        
+        .main-headline { 
+            font-size: clamp(1.6rem, 3.5vw, 2.4rem); 
+            font-weight: 500; 
+            line-height: 1.25; 
+            letter-spacing: -0.5px; 
+            color: var(--text-color);
+            word-wrap: break-word;
+            transition: font-size 0.5s ease;
+        }
+
+        .typing-cursor::after {
+            content: '|';
+            animation: blink-cursor 0.7s infinite;
+        }
+        @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* --- GALERI PROJECT --- */
+        #project-container {
+            display: none;
+            opacity: 0;
+            flex-direction: column;
+            gap: 30px;
+            transition: opacity 0.6s ease;
+            margin-top: 15px; 
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: auto;
+        }
+
+        .project-image-link {
+            display: block;
+            border-radius: 12px;
+            overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .project-card img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+            aspect-ratio: 16 / 9; 
+            transition: transform 0.4s ease; 
+        }
+
+        .project-image-link:hover img {
+            transform: scale(1.05);
+        }
+
+        .project-card p {
+            font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+            line-height: 1.5;
+            color: #333;
+        }
+
+        /* --- BUTTONS --- */
+        .choices-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+            opacity: 0; 
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            pointer-events: auto;
+        }
+        .choices-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #back-container {
+            position: absolute;
+            bottom: clamp(20px, 5vw, 50px);
+            left: clamp(20px, 5vw, 50px);
+            opacity: 0; 
+            display: none; 
+            z-index: 20; 
+            transition: opacity 0.5s ease;
+        }
+
+        .choice-btn {
+            position: relative;
+            background-color: var(--bg-color); 
+            border: 1px solid rgba(17, 17, 17, 0.3); 
+            color: var(--text-color);
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 3vw, 28px);
+            border-radius: 40px;
+            font-family: inherit;
+            font-size: clamp(0.85rem, 1.5vw, 1rem);
+            cursor: pointer;
+            overflow: hidden; 
+            z-index: 1;
+            transition: color 0.4s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: var(--text-color);
+            z-index: -1;
+            border-radius: 40px;
+            transform: scaleY(0); 
+            transform-origin: bottom; 
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .choice-btn:hover { color: var(--bg-color); border-color: var(--text-color); }
+        .choice-btn:hover::before { transform: scaleY(1); }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (min-width: 901px) {
+            #right-panel.zoomed-out { width: 62%; }
+        }
+
+        @media (max-width: 900px) and (min-width: 651px) {
+            #left-panel { width: 45%; }
+            #right-panel.zoomed-out { width: 55%; }
+        }
+
+        @media (max-width: 650px) {
+            #left-panel {
+                width: 100%; height: 55%; 
+                top: auto; bottom: 0;
+                padding: 30px 25px 20px 25px; 
+            }
+            .content {
+                margin: 0 auto; 
+                padding-right: 5px; 
+                padding-bottom: 70px; 
+            }
+            #right-panel.zoomed-out { height: 45%; width: 100%; }
+            .subtitle-intro { min-height: 45px; }
+            #back-container { bottom: 20px; left: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">Sinkronisasi Frame... (0%)</div>
+
+    <div id="start-screen">
+        <div class="start-text">[CLICK] TO START</div>
+    </div>
+
+    <!-- GLOBAL HEADER -->
+    <header>
+        <div class="logo">Lisa®</div>
+    </header>
+
+    <!-- PANEL KIRI (UI TEKS) -->
+    <div id="left-panel">
+        <div class="content">
+            <p class="subtitle-intro" id="type-text-1"></p>
+            <h1 class="main-headline" id="type-text-2"></h1>
+
+            <!-- AREA GALERI PROJECT -->
+            <div id="project-container">
+                <div class="project-card">
+                    <a href="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop" target="_blank" class="project-image-link" title="Klik untuk membuka gambar penuh">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop" alt="Data Center">
+                    </a>
+                    <p><strong>Eksperimen Data Center Mini</strong><br>Belajar merakit server mandiri menggunakan laptop bekas dengan sistem operasi NixOS. Memanfaatkan pondasi bahasa pemrograman Rust untuk memaksimalkan efisiensi dan mengirit daya komputasi.</p>
+                </div>
+                <div class="project-card">
+                    <a href="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop" target="_blank" class="project-image-link" title="Klik untuk membuka gambar penuh">
+                        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop" alt="Design 3D">
+                    </a>
+                    <p><strong>Desain & Tata Letak</strong><br>Pembuatan desain tingkat dasar menggunakan AutoCAD Plant 3D. Mampu menggabungkan aspek teknis visual dengan presentasi digital menggunakan CorelDraw dan CapCut.</p>
+                </div>
+                <div class="project-card">
+                    <a href="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" target="_blank" class="project-image-link" title="Klik untuk membuka gambar penuh">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop" alt="Cyber Security">
+                    </a>
+                    <p><strong>Cyber Security Fundamentals</strong><br>Mengeksplorasi keamanan siber dan fundamental jaringan komputer. Walaupun masih tahap pembelajaran dasar, tekad untuk terus mengeksplorasi teknologi baru menjadi nilai utama.</p>
+                </div>
+            </div>
+            
+            <!-- Menu Utama -->
+            <div class="choices-container" id="choices">
+                <button class="choice-btn" id="btn-intro">Intro</button>
+                <button class="choice-btn" id="btn-project">Project</button>
+                <button class="choice-btn" id="btn-chat">Let's Talk</button> 
+            </div>
+        </div>
+
+        <!-- Tombol Kembali Mengambang -->
+        <div id="back-container">
+            <button class="choice-btn" id="btn-back">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- PANEL KANAN (CANVAS) -->
+    <div id="right-panel">
+        <canvas id="interactive-canvas"></canvas>
+    </div>
+
+    <script>
+        // Pancing browser untuk load database suara sejak awal
+        window.speechSynthesis.getVoices();
+
+        const canvas = document.getElementById('interactive-canvas');
+        const context = canvas.getContext('2d');
+        const loader = document.getElementById('loader');
+        const startScreen = document.getElementById('start-screen');
+        const startText = document.querySelector('.start-text');
+
+        canvas.width = 1200; 
+        canvas.height = 720;
+
+        const frameCount = 300; 
+        const fps = 24; 
+        const fpsInterval = 1000 / fps;
+
+        const currentFrame = index => {
+            let numStr = String(index).padStart(3, '0');
+            return `frames/ezgif-frame-${numStr}.jpg`;
+        };
+
+        const images = [];
+        let robot = { frame: 1 };
+        let imagesLoaded = 0;
+        let isStarted = false;
+        let direction = 1; 
+        let currentFrameIndex = 1;
+        let then = 0;
+
+        for (let i = 1; i <= frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = () => {
+                imagesLoaded++;
+                loader.innerText = `Sinkronisasi Frame... (${Math.round((imagesLoaded / frameCount) * 100)}%)`;
+                if (imagesLoaded === frameCount) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.remove(), 500);
+                    render(); 
+                    startText.style.display = 'block'; 
+                }
+            };
+            images.push(img);
+        }
+
+        function render() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(images[robot.frame - 1], 0, 0); 
+        }
+
+        let typingTimeout;
+        let delayTimeout; 
+        let isAutoScrolling = true;
+        let currentSection = ''; 
+
+        const contentContainer = document.querySelector('.content');
+
+        contentContainer.addEventListener('wheel', () => { isAutoScrolling = false; }, { passive: true });
+        contentContainer.addEventListener('touchmove', () => { isAutoScrolling = false; }, { passive: true });
+        contentContainer.addEventListener('scroll', () => {
+            const isAtBottom = contentContainer.scrollHeight - contentContainer.scrollTop <= contentContainer.clientHeight + 10;
+            if (isAtBottom) {
+                isAutoScrolling = true;
+            }
+        }, { passive: true });
+
+        // ========================================================
+        // FUNGSI TEXT-TO-SPEECH
+        // ========================================================
+        function speakVoice(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID'; 
+
+                let voices = window.speechSynthesis.getVoices();
+                let idVoices = voices.filter(v => v.lang === 'id-ID' || v.lang === 'id_ID');
+
+                if (idVoices.length > 0) {
+                    let femaleVoice = idVoices.find(v => 
+                        v.name.includes('Gadis') || 
+                        v.name.includes('Google') || 
+                        v.name.toLowerCase().includes('female') ||
+                        v.name.toLowerCase().includes('perempuan')
+                    );
+                    utterance.voice = femaleVoice ? femaleVoice : idVoices[0];
+                }
+
+                utterance.rate = 0.85;  
+                utterance.pitch = 1.3;  
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function typeWriterHTML(elementId, htmlContent, speed, callback) {
+            clearTimeout(typingTimeout); 
+            isAutoScrolling = true; 
+            
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            element.classList.add('typing-cursor'); 
+
+            function type() {
+                if (i < htmlContent.length) {
+                    
+                    if (htmlContent.charAt(i) === '<') {
+                        let tag = '';
+                        while (htmlContent.charAt(i) !== '>' && i < htmlContent.length) {
+                            tag += htmlContent.charAt(i);
+                            i++;
+                        }
+                        tag += '>';
+                        element.innerHTML += tag;
+                        i++;
+                        
+                        if (isAutoScrolling) {
+                            contentContainer.scrollTop = contentContainer.scrollHeight;
+                        }
+                        type(); 
+                    } else {
+                        element.innerHTML += htmlContent.charAt(i);
+                        i++;
+                        
+                        if (isAutoScrolling) {
+                            contentContainer.scrollTop = contentContainer.scrollHeight;
+                        }
+                        
+                        typingTimeout = setTimeout(type, speed);
+                    }
+                } else {
+                    element.classList.remove('typing-cursor'); 
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        // ========================================================
+        // KLIK LAYAR AWAL START
+        // ========================================================
+        startScreen.addEventListener('click', () => {
+            if (imagesLoaded < frameCount || isStarted) return;
+            isStarted = true;
+            window.speechSynthesis.getVoices();
+
+            document.getElementById('right-panel').classList.add('zoomed-out');
+            document.getElementById('interactive-canvas').classList.add('zoomed-out');
+            
+            startScreen.style.opacity = '0';
+            setTimeout(() => startScreen.remove(), 500); 
+            
+            document.getElementById('left-panel').classList.add('visible');
+
+            setTimeout(() => {
+                const introText1 = 'Halo saya Lisa, saya di sini mencarikan loker untuk tuan saya yang bodoh.';
+                speakVoice(introText1);
+
+                typeWriterHTML('type-text-1', introText1, 35, () => {
+                    delayTimeout = setTimeout(() => {
+                        document.getElementById('type-text-1').classList.add('blur-effect');
+                        
+                        const introText2 = "Silahkan pilih Intro, Project atau Let's Talk.";
+                        speakVoice(introText2); 
+
+                        typeWriterHTML('type-text-2', introText2, 40, () => {
+                            document.getElementById('choices').classList.add('visible');
+                        });
+                    }, 3000); 
+                });
+            }, 1500);
+
+            setTimeout(() => {
+                then = performance.now();
+                requestAnimationFrame(pingPongCanvasLoop);
+            }, 500);
+        });
+
+        // ========================================================
+        // KLIK TOMBOL INTRO
+        // ========================================================
+        const btnIntro = document.getElementById('btn-intro');
+        const longPersonalText = `Info loker dong yang kerjaannya depan komputer kalo ada di kota yang umk nya tinggi susah nyari loker pendidikan terakhir SMP. Kalo ada loker di depan komputer yang harus saya belajar lagi GPP deh, semangat belajar saya masih tinggi kok. Dah capek apa apa ngerjain sendiri, saya sulit berkomunikasi dan juga bersosialisasi di tambah masalah ekonomi. Mungkin aja ada loker yang bisa saya kerjakan, saya bisa kok hidup di depan komputer terus...<br><br>Soft skill : corel, ms office, Autocad plant 3d basic, capcut, coding gak terlalu jago sih cuman ngerti dikit lah masalah cyber security dan beberapa fundamental nya, ini lagi tertarik belajar rust sih sama bikin sever dengan nixos.<br><br>Atau yang mau kerjasama ngasih project juga bisa... Cuman karena kelemahan saya jarang bersosialisasi mungkin saya tidak begitu tau dunia luar jadi jika ingin membuat project butuh banyak adjustment... Ya bayar nya bisa setelah jadi aja sih biar sama sama enak...<br><br>Atau yang mau kerja sama dengan saya, saya bikin project pribadi tapi saya gak pinter komunikasi dan gak pinter sosialisasi mungkin lu bisa bagian yang gue gak bisa... Soal uang kalo lu kerjasama sama gue lu yang bakal megang semua uang nya yang penting gue dapat hasil aja udah... Gue sebenarnya malas juga berurusan sama uang... Gue kasih contoh project gue di sebelah<br><br>Pingin punya data center tapi ya gitulah...<br>Ini lagi belajar bikin server kecil kecilan pake laptop rusak pake nixos dan pondasi rust biar irit komputasi... Kalo ada yang punya laptop rusak bisa kirim ke gue... Tapi gue gak beli laptop rusaknya... Hehehe<br><br>When yah punya data center?<br>When yah bermanfaat untuk bangsa Indonesia?<br><br>ya kalo di laporin ya udah lah ya pasrah aja masuk penjara... lagian gak bisa bayar juga... ya kalo tokonya hilang berati saya sudah dapat kerja atau project dan atau masuk penjara...<br><br>ya hidup dengan keterbatasan harus bertaruh... lebih baik berusaha daripada menyerah dengan limitasi... lebih baik menyesal melakukannya dari pada tidak melakukannya...<br><br><i>Gam zeh ya'avor</i>`;
+
+        btnIntro.addEventListener('click', () => {
+            window.speechSynthesis.cancel(); 
+            clearTimeout(typingTimeout);
+            clearTimeout(delayTimeout);
+            currentSection = 'intro';
+
+            const choices = document.getElementById('choices');
+            const backContainer = document.getElementById('back-container');
+            const text1 = document.getElementById('type-text-1');
+            const text2 = document.getElementById('type-text-2');
+
+            choices.style.opacity = '0';
+            setTimeout(() => { choices.style.display = 'none'; }, 500);
+
+            text1.style.display = 'none';
+            text2.style.fontSize = 'clamp(1.6rem, 3.5vw, 2.4rem)'; 
+            text2.style.fontWeight = '500'; 
+            contentContainer.scrollTop = 0;
+
+            const openingText = "Tolong berikan tuan saya loker.";
+            speakVoice(openingText);
+
+            typeWriterHTML('type-text-2', openingText, 35, () => {
+                delayTimeout = setTimeout(() => {
+                    text2.style.fontSize = 'clamp(0.9rem, 1.8vw, 1.05rem)'; 
+                    text2.style.fontWeight = '400'; 
+                    contentContainer.scrollTop = 0;
+
+                    backContainer.style.display = 'block';
+                    setTimeout(() => { backContainer.style.opacity = '1'; }, 50);
+
+                    typeWriterHTML('type-text-2', longPersonalText, 15);
+                }, 1500);
+            });
+        });
+
+        // ========================================================
+        // KLIK TOMBOL PROJECT
+        // ========================================================
+        const btnProject = document.getElementById('btn-project');
+        const projectContainer = document.getElementById('project-container');
+
+        btnProject.addEventListener('click', () => {
+            window.speechSynthesis.cancel(); 
+            clearTimeout(typingTimeout);
+            clearTimeout(delayTimeout);
+            currentSection = 'project';
+
+            const choices = document.getElementById('choices');
+            const backContainer = document.getElementById('back-container');
+            const text1 = document.getElementById('type-text-1');
+            const text2 = document.getElementById('type-text-2');
+
+            choices.style.opacity = '0';
+            setTimeout(() => { choices.style.display = 'none'; }, 500);
+
+            text1.style.display = 'none';
+            text2.style.fontSize = 'clamp(1.6rem, 3.5vw, 2.4rem)'; 
+            text2.style.fontWeight = '500'; 
+            contentContainer.scrollTop = 0;
+
+            const projText = "Lihat lah Project tuan saya yang selalu mengerjakan semuanya sendirian.";
+            speakVoice(projText);
+
+            typeWriterHTML('type-text-2', projText, 35, () => {
+                projectContainer.style.display = 'flex';
+                setTimeout(() => { projectContainer.style.opacity = '1'; }, 50);
+
+                backContainer.style.display = 'block';
+                setTimeout(() => { backContainer.style.opacity = '1'; }, 50);
+            });
+        });
+
+        // ========================================================
+        // KLIK TOMBOL LET'S TALK
+        // ========================================================
+        const btnChat = document.getElementById('btn-chat');
+        
+        btnChat.addEventListener('click', () => {
+            window.speechSynthesis.cancel(); 
+            clearTimeout(typingTimeout);
+            clearTimeout(delayTimeout);
+            currentSection = 'chat';
+
+            const choices = document.getElementById('choices');
+            const backContainer = document.getElementById('back-container');
+            const text1 = document.getElementById('type-text-1');
+            const text2 = document.getElementById('type-text-2');
+
+            choices.style.opacity = '0';
+            setTimeout(() => { choices.style.display = 'none'; }, 500);
+
+            text1.style.display = 'none';
+            text2.style.fontSize = 'clamp(1.6rem, 3.5vw, 2.4rem)'; 
+            text2.style.fontWeight = '500'; 
+            contentContainer.scrollTop = 0;
+
+            const chatText = "Sepertinya lebih baik jika anda langsung mengobrol dengan tuan saya.";
+            speakVoice(chatText);
+
+            typeWriterHTML('type-text-2', chatText, 35, () => {
+                // Munculkan tombol kembali supaya UI tidak kosong 
+                backContainer.style.display = 'block';
+                setTimeout(() => { backContainer.style.opacity = '1'; }, 50);
+
+                // Delay 2 detik sebelum buka tab baru
+                delayTimeout = setTimeout(() => {
+                    let chatWindow = window.open('chat.html', '_blank');
+                    
+                    // ANTI POP-UP BLOCKER: Jika browser memblokir tab otomatis, tampilkan manual link
+                    if (!chatWindow || chatWindow.closed || typeof chatWindow.closed === 'undefined') {
+                        text2.innerHTML += '<br><br><span style="font-size: 1rem; font-weight: 400;">(Browser memblokir Pop-up. <a href="chat.html" target="_blank" style="color: inherit; text-decoration: underline;">Klik di sini untuk membuka Chat</a>)</span>';
+                    }
+                }, 2000);
+            });
+        });
+
+        // ========================================================
+        // KLIK TOMBOL KEMBALI
+        // ========================================================
+        const btnBack = document.getElementById('btn-back');
+
+        btnBack.addEventListener('click', () => {
+            window.speechSynthesis.cancel(); 
+            clearTimeout(typingTimeout);
+            clearTimeout(delayTimeout);
+
+            const choices = document.getElementById('choices');
+            const backContainer = document.getElementById('back-container');
+            const text1 = document.getElementById('type-text-1');
+            const text2 = document.getElementById('type-text-2');
+
+            text2.classList.remove('typing-cursor');
+
+            projectContainer.style.opacity = '0';
+            setTimeout(() => { projectContainer.style.display = 'none'; }, 500);
+
+            backContainer.style.opacity = '0';
+            setTimeout(() => { backContainer.style.display = 'none'; }, 500);
+
+            // Tentukan respon sesuai darimana user kembali
+            let backDialogue = "";
+            if (currentSection === 'intro') {
+                backDialogue = "Bagaimana apakah ada loker untuk tuan saya? Jika belum mungkin anda bisa mengecek project dia.";
+            } else if (currentSection === 'project') {
+                backDialogue = "Bagaimana? apakah tuan saya sangat bodoh bagi anda? hahaha";
+            } else {
+                backDialogue = "Silahkan pilih Intro, Project atau Let's Talk.";
+            }
+            
+            text1.style.display = 'none';
+            text2.style.fontSize = 'clamp(1.6rem, 3.5vw, 2.4rem)';
+            text2.style.fontWeight = '500';
+            contentContainer.scrollTop = 0;
+
+            speakVoice(backDialogue);
+            
+            typeWriterHTML('type-text-2', backDialogue, 35, () => {
+                choices.style.display = 'flex';
+                setTimeout(() => { choices.style.opacity = '1'; }, 50);
+            });
+
+            currentSection = ''; 
+        });
+
+        function pingPongCanvasLoop(now) {
+            requestAnimationFrame(pingPongCanvasLoop);
+            const elapsed = now - then;
+            if (elapsed > fpsInterval) {
+                then = now - (elapsed % fpsInterval);
+                currentFrameIndex += direction;
+                if (currentFrameIndex >= frameCount) {
+                    direction = -1; 
+                    currentFrameIndex = frameCount;
+                } else if (currentFrameIndex <= 1) {
+                    direction = 1; 
+                    currentFrameIndex = 1;
+                }
+                robot.frame = currentFrameIndex;
+                render();
+            }
+        }
+    </script>
+</body>
+</html>

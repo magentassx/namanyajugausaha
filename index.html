@@ -71,7 +71,6 @@
     <nav class="sticky top-0 z-50 glass-panel">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 gap-4">
-                <!-- NAMA TOKO DI UBAH MENJADI LISA -->
                 <div class="flex-shrink-0 text-xl font-bold tracking-widest text-white">LISA<span class="text-cyan-400 font-black">.</span></div>
                 <div class="flex-1 max-w-xl hidden md:block">
                     <div class="relative group">
@@ -82,9 +81,9 @@
                         </button>
                     </div>
                 </div>
-                <!-- MENU DROPDOWN SUPPORT DI UBAH MENJADI TOMBOL TALK LISA -->
+                <!-- TOMBOL TALK LISA MEMBUKA DI TAB BARU -->
                 <div class="relative">
-                    <button id="supportBtn" onclick="window.location.href='lisa.html'" class="flex items-center text-xs font-bold px-4 py-1.5 rounded-full bg-white/[0.08] border border-white/20 hover:bg-white/[0.15] transition-all focus:outline-none z-50">
+                    <button id="supportBtn" onclick="window.open('lisa.html', '_blank')" class="flex items-center text-xs font-bold px-4 py-1.5 rounded-full bg-white/[0.08] border border-white/20 hover:bg-white/[0.15] transition-all focus:outline-none z-50">
                         <i class="fa-solid fa-headset text-cyan-400 mr-2"></i> <span class="text-white/90">Talk Lisa</span>
                     </button>
                 </div>
@@ -120,7 +119,7 @@
         <div class="fab-close-btn" onclick="toggleMobileSearch()"><i class="fa-solid fa-xmark text-white/70 text-lg hover:text-white transition-colors"></i></div>
     </div>
 
-    <!-- POP-UP CLOUDFLARE TURNSTILE (TENGAH LAYAR) -->
+    <!-- POP-UP CLOUDFLARE TURNSTILE -->
     <div id="cf-popup" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/80 backdrop-blur-sm" style="transform: translateZ(0);">
         <div class="bg-[#0f172a] p-6 rounded-2xl border border-white/10 shadow-[0_15px_50px_rgba(0,0,0,0.8)] flex flex-col items-center popup-scale">
             <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
@@ -132,7 +131,7 @@
         </div>
     </div>
 
-    <!-- POP-UP DETAIL PRODUK (DESAIN PREMIUM) -->
+    <!-- POP-UP DETAIL PRODUK -->
     <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="tutupPopupOverlay(event)" style="transform: translateZ(0);">
         <div class="flex flex-col items-center w-full max-w-sm" style="max-height: 95vh;">
             
@@ -198,10 +197,6 @@
             <div class="flex items-center text-xs font-bold text-cyan-600 bg-cyan-100 px-4 py-2 rounded-full animate-pulse shadow-sm w-full justify-center">
                 <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Menunggu Pembayaran...
             </div>
-
-            <!-- <button id="btnSimulate" onclick="triggerSimulation()" class="mt-4 w-full py-2 bg-orange-100/50 text-orange-600 border border-orange-300 font-bold rounded-xl hover:bg-orange-100 transition-colors text-xs flex justify-center items-center">
-                Simulasikan pembayaran
-            </button> -->
         </div>
     </div>
 
@@ -378,11 +373,9 @@
                     safeImg = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=300&output=webp`;
                 }
                 
-                // --- PERUBAHAN BASE64 ENKRIPSI ---
                 const dataRahasia = product.id + ":" + appState.fingerprint;
                 const enkripsi = btoa(dataRahasia);
                 const masterDownloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
-                // ---------------------------------
                 
                 const actionPopup = `bukaPopup('${product.id}')`;
 
@@ -463,11 +456,9 @@
             Object.keys(appState.purchasedMap).forEach(productId => {
                 const btnContainer = document.getElementById(`container-btn-${productId}`);
                 if (btnContainer) {
-                    // --- PERUBAHAN BASE64 ENKRIPSI ---
                     const dataRahasia = productId + ":" + appState.fingerprint;
                     const enkripsi = btoa(dataRahasia);
                     const masterDownloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
-                    // ---------------------------------
                     btnContainer.innerHTML = `<a href="${masterDownloadUrl}" target="_blank" rel="noopener noreferrer" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`;
                 }
             });
@@ -504,11 +495,9 @@
                             img = `https://wsrv.nl/?url=${encodeURIComponent(secureApp.sanitizeURL(prod.cover_url).replace("i.ibb.co", "i.ibb.co.com"))}&w=100&output=webp`;
                         }
                         
-                        // --- PERUBAHAN BASE64 ENKRIPSI ---
                         const dataRahasia = id + ":" + appState.fingerprint;
                         const enkripsi = btoa(dataRahasia);
                         const downloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
-                        // ---------------------------------
                         
                         list.innerHTML += `
                             <div class="flex items-center gap-3 bg-white/[0.03] p-3 rounded-xl border border-white/5 hover:bg-white/[0.06] transition-colors">
@@ -630,8 +619,6 @@
                 fab.classList.add('expanded'); setTimeout(() => input.focus(), 300);
             }
         }
-
-        // Fungsi toggleSupportMenu dihapus karena menu dropdown sudah dihapus dari HTML
 
         // ==========================================
         // PROSES PEMBAYARAN + CLOUDFLARE TURNSTILE

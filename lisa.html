@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://i.ibb.co.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https://i.ibb.co.com data: blob:; font-src https://fonts.gstatic.com; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
     <title>L.I.S.A Clone - AI Storytelling Portfolio</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,9 +29,6 @@
             overflow: hidden; 
         }
 
-        /* ========================================================
-           FITUR BARU: CINEMATIC GLITCH PRELOADER
-           ======================================================== */
         #loco-preloader {
             position: fixed; inset: 0; 
             background-color: #000000; color: #ffffff;
@@ -54,7 +57,7 @@
         }
 
         .loco-text-container {
-            font-family: 'Courier New', Courier, monospace; /* Font Hacker/Glitch */
+            font-family: 'Courier New', Courier, monospace;
             font-size: clamp(0.85rem, 2vw, 1.1rem);
             line-height: 1.4; 
             letter-spacing: 1px;
@@ -64,7 +67,6 @@
         .mt-6 { margin-top: 1.5rem; }
         .mt-4 { margin-top: 1rem; }
 
-        /* --- LAYAR INTRO KLIK --- */
         #start-screen {
             position: absolute;
             top: 0; left: 0;
@@ -98,7 +100,6 @@
             100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); filter: drop-shadow(0 0 0px transparent); }
         }
 
-        /* --- GLOBAL HEADER --- */
         header { 
             position: absolute;
             top: 0; left: 0; width: 100%;
@@ -109,7 +110,6 @@
         }
         .logo { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 500; pointer-events: auto; }
 
-        /* --- DIV PANEL KIRI --- */
         #left-panel {
             position: absolute; 
             top: 0; left: 0;
@@ -142,7 +142,6 @@
         .content::-webkit-scrollbar-thumb { background: rgba(17, 17, 17, 0.2); border-radius: 10px; }
         .content::-webkit-scrollbar-thumb:hover { background: rgba(17, 17, 17, 0.5); }
 
-        /* --- DIV PANEL KANAN --- */
         #right-panel {
             position: absolute;
             top: 0; right: 0;
@@ -164,7 +163,6 @@
         }
         #interactive-canvas.zoomed-out { transform: scale(1); }
 
-        /* --- SOUND TOGGLE --- */
         .sound-toggle-pill {
             position: absolute;
             bottom: clamp(20px, 5vw, 40px);
@@ -212,7 +210,6 @@
         .sound-toggle-pill.is-off #icon-on { color: #ffffff; } 
         .sound-toggle-pill.is-off #icon-off { color: #000000; } 
 
-        /* --- TYPOGRAPHY --- */
         .subtitle-intro {
             font-size: clamp(1rem, 2vw, 1.15rem); 
             line-height: 1.6; color: #333; pointer-events: auto;
@@ -231,7 +228,6 @@
         .typing-cursor::after { content: '|'; animation: blink-cursor 0.7s infinite; }
         @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* --- GALERI PROJECT --- */
         #project-container {
             display: none; opacity: 0; flex-direction: column; gap: 30px;
             transition: opacity 0.6s ease; margin-top: 15px; 
@@ -260,7 +256,6 @@
         .project-card p a { color: #1e3a8a; font-weight: 600; text-decoration: underline; transition: color 0.3s; }
         .project-card p a:hover { color: #0284c7; }
 
-        /* --- SLIDER OVERLAY (SCROLL SLIDE) --- */
         #slider-overlay {
             position: fixed; inset: 0; background: rgba(10, 15, 29, 0.95); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -294,7 +289,6 @@
         }
         @keyframes pulseHint { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-        /* --- BUTTONS --- */
         .choices-container {
             display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px;
             opacity: 0; transform: translateY(20px); transition: all 0.5s ease; pointer-events: auto;
@@ -328,7 +322,6 @@
         .choice-btn:hover { color: var(--bg-color); border-color: var(--text-color); }
         .choice-btn:hover::before { transform: scaleY(1); }
 
-        /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (min-width: 901px) { #right-panel.zoomed-out { width: 62%; } }
         @media (max-width: 900px) and (min-width: 651px) { #left-panel { width: 45%; } #right-panel.zoomed-out { width: 55%; } }
         @media (max-width: 650px) {
@@ -344,7 +337,6 @@
 </head>
 <body>
 
-    <!-- FITUR BARU: CINEMATIC GLITCH PRELOADER -->
     <div id="loco-preloader">
         <div class="loco-preloader-inner">
             <div class="loco-logo">Lisa®</div>
@@ -361,18 +353,14 @@
         <div class="logo">Lisa®</div>
     </header>
 
-    <!-- PANEL KIRI (UI TEKS) -->
     <div id="left-panel">
         <div class="content">
             <p class="subtitle-intro" id="type-text-1"></p>
             <h1 class="main-headline" id="type-text-2"></h1>
 
-            <!-- AREA GALERI PROJECT PORTFOLIO ANDA -->
             <div id="project-container">
-                
-                <!-- PROJECT 1: E-commerce Individu (8 FOTO) -->
                 <div class="project-card">
-                    <div class="project-gallery" onclick="openSlider(this)">
+                    <div class="project-gallery">
                         <img src="https://i.ibb.co.com/21fm1pHY/8-20kb.jpg" data-full="https://i.ibb.co.com/21fm1pHY/8-20kb.jpg" alt="Ecommerce Individu 1">
                         <img src="https://i.ibb.co.com/jPFg2GWn/1-20kb.jpg" data-full="https://i.ibb.co.com/jPFg2GWn/1-20kb.jpg" alt="Ecommerce Individu 2">
                         <img src="https://i.ibb.co.com/1cbtbx2/2-20kb.jpg" data-full="https://i.ibb.co.com/1cbtbx2/2-20kb.jpg" alt="Ecommerce Individu 3">
@@ -383,32 +371,30 @@
                         <img src="https://i.ibb.co.com/N62J9fBf/7-20kb.jpg" data-full="https://i.ibb.co.com/N62J9fBf/7-20kb.jpg" alt="Ecommerce Individu 8">
                     </div>
                     <p><strong>Ecommerce Individu</strong><br>
-                    <a href="https://feb-wheat-rho.vercel.app" target="_blank">feb-wheat-rho.vercel.app</a><br>
+                    <a href="https://feb-wheat-rho.vercel.app" target="_blank" rel="noopener noreferrer">feb-wheat-rho.vercel.app</a><br>
                     Eccomerce untuk orang yang ingin membuat tokonya sendiri yang sudah dilengkapi pembuat tagihan otomatis dengan payment gateway dan booking kurir otomatis beserta layanan jasa kurir yang akurat dan di lengkapi dengan bot pembuat kode promo otomatis dengan target pengunjung yang tak pernah berbelanja, pengunjung baru, pengunjung yang tidak aktif selama beberapa hari dan banyak lagi bisa di atur, dashborad udah bisa cetak resi berupa pdf dan bisa upload massal seperti shopee dan ecomerce besar lainnya, easy migarsi dari shopee atau tiktok atau tokped karena tinggal link fotonya di masukan ke inputan excel dan banyak fitur dashboard yang sama persis seperti di ecomerce besar pokok nya kecuali fitur analysis karena saya bikin di sever gratisan ada limit yang gak bisa saya coba untuk membuat fitur analisis tapi overall kalo untuk jualan semuanya sudah otomatis. Produk bisa up to 20.000 tanpa lag. menggunakan new sql dan backend rust, masalah security aman lah kalo gak percaya pentest aja coba. Kalo mau beli saya integrasikan semuanya semau anda atau mau migrasi kemana nanti saya atur lagi full stack nya... maintinance full garansi dari saya life time tapi ada fee nya... hehehe. Atau mau gratis tapi setiap transaksi ada fee 1000 namun untuk yang ini saya gak menjamin server bisa bertahan dari limitasi server gratisan soalnya saya deploynya di server gratisan juga, limitasinya cuman masalah bandwitch aja sih dan Request unit itupun kalo memang pengunjung toko anda ramai... kalo mau aman bikin vps sendiri untuk backend nya pake laptop spek gak terlalu rendah udah bisa tapi biar irit listriknya dan pemakaian laptopnya pake linux, saran sih nixos tapi gak usah pake GUI... terus berjalan dengan rust jadi bisa di atasi lah masalah komputasi di spek yang gak terlalu rendah... cuman untuk sql nya mungkin jadi masalah jika pake new sql... bisa disesuaikan. Pinginnya bikin super app gitu sih yang menggabungkan semua jenis produk pembeli dari digital dan fisik dan makanan dan pengiriman dan sosmed semuanya dalam satu platform tapi ya gitulah...
                     </p>
                 </div>
 
-                <!-- PROJECT 2: Ecommerce Digital (2 FOTO) -->
                 <div class="project-card">
-                    <div class="project-gallery" onclick="openSlider(this)">
+                    <div class="project-gallery">
                         <img src="https://i.ibb.co.com/21mKXv3n/a-20kb.jpg" data-full="https://i.ibb.co.com/21mKXv3n/a-20kb.jpg" alt="Ecommerce Digital 1">
                         <img src="https://i.ibb.co.com/qZgsskd/b-20kb.jpg" data-full="https://i.ibb.co.com/qZgsskd/b-20kb.jpg" alt="Ecommerce Digital 2">
                     </div>
                     <p><strong>Ecommerce Individu Digital</strong><br>
-                    <a href="https://magentassx.github.io/namanyajugausaha/" target="_blank">https://magentassx.github.io/namanyajugausaha/</a><br>
+                    <a href="https://magentassx.github.io/namanyajugausaha/" target="_blank" rel="noopener noreferrer">https://magentassx.github.io/namanyajugausaha/</a><br>
                     Ecomerce untuk juala produk digital jenis apa saja up to 20.000 produk tanpa lag lagi lagi ya backend rust dan new sql... untuk file nya kita taruh di tempat rahasia yang semua orang tau... setelah pembayaran produk langsung bisa di download tanpa harus konfirmasi atau apalah yang buang buang waktu untuk mengakali bandwitch kita oper tugas download ke cloudflare... kalo mau beli source kodenya atau mau kerja sama saya bisa juga gue orang nya simple aja yang penting gak jadi masalah buat lu gue ngikut aja sistemnya gimana... gue orangnya gak suka cari masalah juga sih... sistemnya pembeli gak perlu login karena setiap pembeli masuk web sudah ada pencatat finger print jadi setiap device hanya bisa download dari device itu juga tidak bisa di download orang lain... dan fingerprint di catat di database dan link download di batasi hanya untuk 3x doanload dalam waktu 24 jam, ya karena pake gratisan ya.. mungkin kalo bisa buat server sendiri bisa di buat lebih powerfull lagi... dan sudah dilengkapi dengan dua tipe pembayaran bisa tipe pembayaran dari payment gateway atau dari qris statis yang di ubah menjadi dinamis dan  qris dinamis nya tidak hit api langsung jadi masih tergolong aman lah cuman harus instal aplikasi android untuk menangkap webhook nya agar otomatis pembayaran terupdate dan gak usah bingung switch nya tinggal switch dari haralaman dashboard langsung otomatis backend akan melakukan tugasnya mau pake payment gateway atau mau pake qris statis.
                     </p>
                 </div>
 
-                <!-- PROJECT 3: Project Assistant (3 FOTO) -->
                 <div class="project-card">
-                    <div class="project-gallery" onclick="openSlider(this)">
+                    <div class="project-gallery">
                         <img src="https://i.ibb.co.com/tPkyD1Tf/1a-20kb.jpg" data-full="https://i.ibb.co.com/tPkyD1Tf/1a-20kb.jpg" alt="Project Asistant 1">
                         <img src="https://i.ibb.co.com/fVDHp8Fg/1b-20kb.jpg" data-full="https://i.ibb.co.com/fVDHp8Fg/1b-20kb.jpg" alt="Project Asistant 2">
                         <img src="https://i.ibb.co.com/8LC646q2/1c-20kb.jpg" data-full="https://i.ibb.co.com/8LC646q2/1c-20kb.jpg" alt="Project Asistant 3">
                     </div>
                     <p><strong>Project Asistant</strong><br>
-                    Project Asistant project untuk pembantu saya banyak sih tool nya yang gak bisa saya sebutkan semuanya termasuk bot dan file file lainnya seperti autocad dan penggunaan aplikasi lainnya... kalo ada project apa aja kabarin saya aja biar saya kerjakan nanti masalah pembayaran di akhir aja setelah project nya selesai biar sama sama enak... contoh ini <a href="https://landingpage-sigma-opal.vercel.app/" target="_blank">https://landingpage-sigma-opal.vercel.app/</a> ... dan bikin bot polymarket karena gak ada uang yang sesuai dengan money management saya saya gak bisa main itu yang mana minimal punya tabungan 5 juta aja susah banget... dan bot forex yang baru menemukan rumus arah harga akan menuju kemana namun untuk arah nya belum menemukan rumusnya...
+                    Project Asistant project untuk pembantu saya banyak sih tool nya yang gak bisa saya sebutkan semuanya termasuk bot dan file file lainnya seperti autocad dan penggunaan aplikasi lainnya... kalo ada project apa aja kabarin saya aja biar saya kerjakan nanti masalah pembayaran di akhir aja setelah project nya selesai biar sama sama enak... contoh ini <a href="https://landingpage-sigma-opal.vercel.app/" target="_blank" rel="noopener noreferrer">https://landingpage-sigma-opal.vercel.app/</a> ... dan bikin bot polymarket karena gak ada uang yang sesuai dengan money management saya saya gak bisa main itu yang mana minimal punya tabungan 5 juta aja susah banget... dan bot forex yang baru menemukan rumus arah harga akan menuju kemana namun untuk arah nya belum menemukan rumusnya...
                     </p>
                 </div>
             </div>
@@ -425,7 +411,6 @@
         </div>
     </div>
 
-    <!-- PANEL KANAN (CANVAS) -->
     <div id="right-panel">
         <canvas id="interactive-canvas"></canvas>
         
@@ -440,17 +425,56 @@
         </button>
     </div>
 
-    <!-- FULLSCREEN SLIDER OVERLAY -->
     <div id="slider-overlay">
         <div class="slider-header">
-            <button onclick="closeSlider()" class="choice-btn">← Kembali</button>
+            <button id="btn-close-slider" class="choice-btn">← Kembali</button>
         </div>
         <div class="slider-track" id="slider-track">
-            <!-- Gambar dimuat via JS -->
         </div>
     </div>
 
     <script>
+        if (window.top !== window.self) {
+            window.top.location = window.self.location;
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+        document.addEventListener('drop', e => e.preventDefault());
+
+        window.addEventListener('error', function(e) {
+            e.preventDefault();
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            e.preventDefault();
+        });
+
+        const originalFetch = window.fetch;
+        let requestCount = 0;
+        const RATE_LIMIT_WINDOW_MS = 60000; 
+        const MAX_REQUESTS_PER_WINDOW = 50; 
+
+        setInterval(() => { requestCount = 0; }, RATE_LIMIT_WINDOW_MS);
+
+        window.fetch = async function(...args) {
+            if (requestCount >= MAX_REQUESTS_PER_WINDOW) {
+                return Promise.reject(new Error('Rate limit exceeded.'));
+            }
+            requestCount++;
+            return originalFetch.apply(this, args);
+        };
+
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
         window.speechSynthesis.getVoices();
 
         const canvas = document.getElementById('interactive-canvas');
@@ -458,7 +482,6 @@
         const startScreen = document.getElementById('start-screen');
         const startText = document.querySelector('.start-text');
         
-        // Elemen Glitch Text Preloader
         const preloader = document.getElementById('loco-preloader');
         const glitch1 = document.getElementById('glitch-text-1');
         const glitch2 = document.getElementById('glitch-text-2');
@@ -476,17 +499,14 @@
         };
 
         const images = [];
-        let robot = { frame: 1 };
+        let robot = Object.freeze({ frame: 1 });
         let imagesLoaded = 0;
         let isStarted = false;
         let direction = 1; 
         let currentFrameIndex = 1;
         let then = 0;
 
-        // ========================================================
-        // LOGIKA LOADING GLITCH PRELOADER
-        // ========================================================
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!<>-_\\/[]{}—=+*^?#";
+        const chars = Object.freeze("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!<>-_\\/[]{}—=+*^?#");
         
         function scramble(target, progress) {
             let result = "";
@@ -501,7 +521,6 @@
             return result;
         }
 
-        // Pastikan preloader tampil minimal 2.5 detik agar efek cinematic-nya terasa
         let minTimePassed = false;
         setTimeout(() => { minTimePassed = true; checkPreloaderDone(); }, 2500); 
         
@@ -560,7 +579,7 @@
 
         function render() {
             context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(images[robot.frame - 1], 0, 0); 
+            context.drawImage(images[currentFrameIndex - 1], 0, 0); 
         }
 
         let typingTimeout;
@@ -580,9 +599,6 @@
             }
         }, { passive: true });
 
-        // ========================================================
-        // LOGIKA SLIDER GALLERY
-        // ========================================================
         function openSlider(galleryElement) {
             const sliderOverlay = document.getElementById('slider-overlay');
             const sliderTrack = document.getElementById('slider-track');
@@ -596,12 +612,13 @@
                 const slideWrapper = document.createElement('a');
                 slideWrapper.href = fullSrc;
                 slideWrapper.target = "_blank";
+                slideWrapper.rel = "noopener noreferrer";
                 slideWrapper.className = "slider-slide";
                 slideWrapper.title = "Klik untuk membuka di tab baru";
 
                 const slideImg = document.createElement('img');
                 slideImg.src = fullSrc;
-                slideImg.alt = img.alt;
+                slideImg.alt = img.alt || 'Gallery Image';
                 
                 const hint = document.createElement('div');
                 hint.className = "slider-hint";
@@ -615,21 +632,24 @@
             sliderOverlay.classList.add('active');
         }
 
-        function closeSlider() {
+        document.querySelectorAll('.project-gallery').forEach(gallery => {
+            gallery.addEventListener('click', throttle(function() {
+                openSlider(this);
+            }, 500));
+        });
+
+        document.getElementById('btn-close-slider').addEventListener('click', throttle(function() {
             const sliderOverlay = document.getElementById('slider-overlay');
             sliderOverlay.classList.remove('active');
             
             setTimeout(() => {
                 document.getElementById('slider-track').innerHTML = '';
             }, 400);
-        }
+        }, 500));
 
-        // ========================================================
-        // LOGIKA TOMBOL MUTE / UNMUTE
-        // ========================================================
         const soundToggleBtn = document.getElementById('sound-toggle-btn');
 
-        soundToggleBtn.addEventListener('click', () => {
+        soundToggleBtn.addEventListener('click', throttle(() => {
             isMuted = !isMuted; 
 
             if (isMuted) {
@@ -640,7 +660,7 @@
                 soundToggleBtn.classList.remove('is-off');
                 soundToggleBtn.classList.add('is-on');
             }
-        });
+        }, 500));
 
         function speakVoice(text) {
             if (isMuted) return;
@@ -707,10 +727,7 @@
             type();
         }
 
-        // ========================================================
-        // KLIK LAYAR AWAL START
-        // ========================================================
-        startScreen.addEventListener('click', () => {
+        startScreen.addEventListener('click', throttle(() => {
             if (imagesLoaded < frameCount || isStarted) return;
             isStarted = true;
             window.speechSynthesis.getVoices();
@@ -745,15 +762,12 @@
                 then = performance.now();
                 requestAnimationFrame(pingPongCanvasLoop);
             }, 500);
-        });
+        }, 1000));
 
-        // ========================================================
-        // MENU LOGIC
-        // ========================================================
         const btnIntro = document.getElementById('btn-intro');
-        const longPersonalText = `Info loker dong yang kerjaannya depan komputer kalo ada di kota yang umk nya tinggi susah nyari loker pendidikan terakhir SMP. Kalo ada loker di depan komputer yang harus saya belajar lagi GPP deh, semangat belajar saya masih tinggi kok. Dah capek apa apa ngerjain sendiri, saya sulit berkomunikasi dan juga bersosialisasi di tambah masalah ekonomi. Mungkin aja ada loker yang bisa saya kerjakan, saya bisa kok hidup di depan komputer terus...<br><br>Soft skill : corel, ms office, Autocad plant 3d basic, capcut, coding gak terlalu jago sih cuman ngerti dikit lah masalah cyber security dan beberapa fundamental nya, ini lagi tertarik belajar rust sih sama bikin sever dengan nixos.<br><br>Atau yang mau kerjasama ngasih project juga bisa... Cuman karena kelemahan saya jarang bersosialisasi mungkin saya tidak begitu tau dunia luar jadi jika ingin membuat project butuh banyak adjustment... Ya bayar nya bisa setelah jadi aja sih biar sama sama enak...<br><br>Atau yang mau kerja sama dengan saya, saya bikin project pribadi tapi saya gak pinter komunikasi dan gak pinter sosialisasi mungkin lu bisa bagian yang gue gak bisa... Soal uang kalo lu kerjasama sama gue lu yang bakal megang semua uang nya yang penting gue dapat hasil aja udah... Gue sebenarnya malas juga berurusan sama uang... Gue kasih contoh project gue di sebelah<br><br>Pingin punya data center tapi ya gitulah...<br>Ini lagi belajar bikin server kecil kecilan pake laptop rusak pake nixos dan pondasi rust biar irit komputasi... Kalo ada yang punya laptop rusak bisa kirim ke gue... Tapi gue gak beli laptop rusaknya... Hehehe<br><br>When yah punya data center?<br>When yah bermanfaat untuk bangsa Indonesia?<br><br>ya kalo di laporin ya udah lah ya pasrah aja masuk penjara... lagian gak bisa bayar juga... ya kalo tokonya hilang berati saya sudah dapat kerja atau project dan atau masuk penjara...<br><br>ya hidup dengan keterbatasan harus bertaruh... lebih baik berusaha daripada menyerah dengan limitasi... lebih baik menyesal melakukannya dari pada tidak melakukannya...<br><br><i>Gam zeh ya'avor</i>`;
+        const longPersonalText = Object.freeze(`Info loker dong yang kerjaannya depan komputer kalo ada di kota yang umk nya tinggi susah nyari loker pendidikan terakhir SMP. Kalo ada loker di depan komputer yang harus saya belajar lagi GPP deh, semangat belajar saya masih tinggi kok. Dah capek apa apa ngerjain sendiri, saya sulit berkomunikasi dan juga bersosialisasi di tambah masalah ekonomi. Mungkin aja ada loker yang bisa saya kerjakan, saya bisa kok hidup di depan komputer terus...<br><br>Soft skill : corel, ms office, Autocad plant 3d basic, capcut, coding gak terlalu jago sih cuman ngerti dikit lah masalah cyber security dan beberapa fundamental nya, ini lagi tertarik belajar rust sih sama bikin sever dengan nixos.<br><br>Atau yang mau kerjasama ngasih project juga bisa... Cuman karena kelemahan saya jarang bersosialisasi mungkin saya tidak begitu tau dunia luar jadi jika ingin membuat project butuh banyak adjustment... Ya bayar nya bisa setelah jadi aja sih biar sama sama enak...<br><br>Atau yang mau kerja sama dengan saya, saya bikin project pribadi tapi saya gak pinter komunikasi dan gak pinter sosialisasi mungkin lu bisa bagian yang gue gak bisa... Soal uang kalo lu kerjasama sama gue lu yang bakal megang semua uang nya yang penting gue dapat hasil aja udah... Gue sebenarnya malas juga berurusan sama uang... Gue kasih contoh project gue di sebelah<br><br>Pingin punya data center tapi ya gitulah...<br>Ini lagi belajar bikin server kecil kecilan pake laptop rusak pake nixos dan pondasi rust biar irit komputasi... Kalo ada yang punya laptop rusak bisa kirim ke gue... Tapi gue gak beli laptop rusaknya... Hehehe<br><br>When yah punya data center?<br>When yah bermanfaat untuk bangsa Indonesia?<br><br>ya kalo di laporin ya udah lah ya pasrah aja masuk penjara... lagian gak bisa bayar juga... ya kalo tokonya hilang berati saya sudah dapat kerja atau project dan atau masuk penjara...<br><br>ya hidup dengan keterbatasan harus bertaruh... lebih baik berusaha daripada menyerah dengan limitasi... lebih baik menyesal melakukannya dari pada tidak melakukannya...<br><br><i>Gam zeh ya'avor</i>`);
 
-        btnIntro.addEventListener('click', () => {
+        btnIntro.addEventListener('click', throttle(() => {
             window.speechSynthesis.cancel(); 
             clearTimeout(typingTimeout);
             clearTimeout(delayTimeout);
@@ -787,12 +801,12 @@
                     typeWriterHTML('type-text-2', longPersonalText, 15);
                 }, 1500);
             });
-        });
+        }, 1000));
 
         const btnProject = document.getElementById('btn-project');
         const projectContainer = document.getElementById('project-container');
 
-        btnProject.addEventListener('click', () => {
+        btnProject.addEventListener('click', throttle(() => {
             window.speechSynthesis.cancel(); 
             clearTimeout(typingTimeout);
             clearTimeout(delayTimeout);
@@ -821,10 +835,10 @@
                 backContainer.style.display = 'block';
                 setTimeout(() => { backContainer.style.opacity = '1'; }, 50);
             });
-        });
+        }, 1000));
 
         const btnChat = document.getElementById('btn-chat');
-        btnChat.addEventListener('click', () => {
+        btnChat.addEventListener('click', throttle(() => {
             window.speechSynthesis.cancel(); 
             clearTimeout(typingTimeout);
             clearTimeout(delayTimeout);
@@ -851,18 +865,18 @@
                 setTimeout(() => { backContainer.style.opacity = '1'; }, 50);
 
                 delayTimeout = setTimeout(() => {
-                    let chatWindow = window.open('chat.html', '_blank');
+                    let chatWindow = window.open('chat.html', '_blank', 'noopener,noreferrer');
                     
                     if (!chatWindow || chatWindow.closed || typeof chatWindow.closed === 'undefined') {
-                        text2.innerHTML += '<br><br><span style="font-size: 1rem; font-weight: 400;">(Browser memblokir Pop-up. <a href="chat.html" target="_blank" style="color: inherit; text-decoration: underline;">Klik di sini untuk membuka Chat</a>)</span>';
+                        text2.innerHTML += '<br><br><span style="font-size: 1rem; font-weight: 400;">(Browser memblokir Pop-up. <a href="chat.html" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Klik di sini untuk membuka Chat</a>)</span>';
                     }
                 }, 2000);
             });
-        });
+        }, 1000));
 
         const btnBack = document.getElementById('btn-back');
 
-        btnBack.addEventListener('click', () => {
+        btnBack.addEventListener('click', throttle(() => {
             window.speechSynthesis.cancel(); 
             clearTimeout(typingTimeout);
             clearTimeout(delayTimeout);
@@ -906,7 +920,7 @@
             });
 
             currentSection = ''; 
-        });
+        }, 1000));
 
         function pingPongCanvasLoop(now) {
             requestAnimationFrame(pingPongCanvasLoop);
@@ -921,7 +935,6 @@
                     direction = 1; 
                     currentFrameIndex = 1;
                 }
-                robot.frame = currentFrameIndex;
                 render();
             }
         }

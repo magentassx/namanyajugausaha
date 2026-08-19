@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- PROTEKSI: Security Meta Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://backendrust.onrender.com https://*.fpjscdn.net https://challenges.cloudflare.com; img-src 'self' data: https://wsrv.nl https://placehold.co https://upload.wikimedia.org; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; frame-src https://challenges.cloudflare.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://backendrust.onrender.com https://*.fpjscdn.net https://challenges.cloudflare.com; img-src 'self' data: blob: https://wsrv.nl https://placehold.co https://upload.wikimedia.org https://i.ibb.co.com; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
     <title>Lisa Digital E-Books</title>
@@ -20,7 +21,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@4/dist/fp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
-    <!-- SCRIPT ANTI-BOT CLOUDFLARE TURNSTILE -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <style>
@@ -75,15 +75,14 @@
                 <div class="flex-1 max-w-xl hidden md:block">
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-white/50 group-focus-within:text-cyan-400 transition-colors"></i></div>
-                        <input type="text" id="desktopSearch" oninput="debounceSearch(this.value)" class="block w-full pl-11 pr-10 py-2 border border-white/20 rounded-full bg-white/[0.04] text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400 focus:bg-white/[0.08] sm:text-sm transition-all" placeholder="Cari judul, kategori, atau deskripsi e-book...">
+                        <input type="text" id="desktopSearch" oninput="debounceSearch(this.value)" class="block w-full pl-11 pr-10 py-2 border border-white/20 rounded-full bg-white/[0.04] text-white placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-cyan-400 focus:border-cyan-400 focus:bg-white/[0.08] sm:text-sm transition-all" placeholder="Cari judul, kategori, atau deskripsi e-book..." autocomplete="off">
                         <button id="clearSearchBtn" onclick="clearDesktopSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden text-white/40 hover:text-white transition-colors focus:outline-none">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>
                 </div>
-                <!-- TOMBOL TALK LISA MEMBUKA DI TAB BARU -->
                 <div class="relative">
-                    <button id="supportBtn" onclick="window.open('lisa.html', '_blank')" class="flex items-center text-xs font-bold px-4 py-1.5 rounded-full bg-white/[0.08] border border-white/20 hover:bg-white/[0.15] transition-all focus:outline-none z-50">
+                    <button id="supportBtn" onclick="openSupport()" class="flex items-center text-xs font-bold px-4 py-1.5 rounded-full bg-white/[0.08] border border-white/20 hover:bg-white/[0.15] transition-all focus:outline-none z-50">
                         <i class="fa-solid fa-headset text-cyan-400 mr-2"></i> <span class="text-white/90">Talk Lisa</span>
                     </button>
                 </div>
@@ -115,11 +114,10 @@
 
     <div id="mobileSearchFab" class="search-fab-container md:hidden">
         <div class="fab-icon-box" onclick="toggleMobileSearch()"><i class="fa-solid fa-magnifying-glass text-white text-lg"></i></div>
-        <input type="text" id="mobileSearchInput" oninput="debounceSearch(this.value)" class="search-input-mobile" placeholder="Cari judul atau kategori...">
+        <input type="text" id="mobileSearchInput" oninput="debounceSearch(this.value)" class="search-input-mobile" placeholder="Cari judul atau kategori..." autocomplete="off">
         <div class="fab-close-btn" onclick="toggleMobileSearch()"><i class="fa-solid fa-xmark text-white/70 text-lg hover:text-white transition-colors"></i></div>
     </div>
 
-    <!-- POP-UP CLOUDFLARE TURNSTILE -->
     <div id="cf-popup" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/80 backdrop-blur-sm" style="transform: translateZ(0);">
         <div class="bg-[#0f172a] p-6 rounded-2xl border border-white/10 shadow-[0_15px_50px_rgba(0,0,0,0.8)] flex flex-col items-center popup-scale">
             <div class="w-12 h-12 bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
@@ -131,12 +129,9 @@
         </div>
     </div>
 
-    <!-- POP-UP DETAIL PRODUK -->
     <div id="popupDetail" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="tutupPopupOverlay(event)" style="transform: translateZ(0);">
         <div class="flex flex-col items-center w-full max-w-sm" style="max-height: 95vh;">
-            
             <div class="bg-[#0a0f1d]/95 backdrop-blur-xl border border-white/10 rounded-3xl w-full flex flex-col overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] popup-scale relative" style="max-height: calc(95vh - 70px);">
-                
                 <div class="absolute top-0 w-full h-48 bg-gradient-to-b from-cyan-600/20 to-transparent pointer-events-none"></div>
                 <div class="absolute top-[-50px] left-1/2 -translate-x-1/2 w-48 h-48 bg-cyan-500/30 blur-[60px] rounded-full pointer-events-none"></div>
 
@@ -165,7 +160,6 @@
         </div>
     </div>
 
-    <!-- POP-UP DAFTAR UNDUHAN SAYA -->
     <div id="libraryPopup" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="if(event.target.id==='libraryPopup') toggleLibraryPopup()" style="transform: translateZ(0);">
         <div class="bg-[#0f172a] border border-white/10 rounded-2xl w-full max-w-md flex flex-col overflow-hidden shadow-[0_15px_50px_rgba(0,0,0,0.8)] popup-scale relative" style="max-height: 85vh;">
             <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/[0.02] shrink-0">
@@ -176,7 +170,6 @@
         </div>
     </div>
 
-    <!-- POP-UP PEMBAYARAN QRIS -->
     <div id="qrisPopup" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md" style="transform: translateZ(0);">
         <div class="bg-[#f8f9fa] rounded-3xl w-full max-w-sm flex flex-col overflow-hidden items-center p-6 text-slate-800 shadow-[0_0_50px_rgba(6,182,212,0.3)] popup-scale relative border-4 border-cyan-500/20">
             <div class="w-full flex justify-between items-center mb-4">
@@ -200,7 +193,6 @@
         </div>
     </div>
 
-    <!-- POP-UP SUKSES PEMBAYARAN -->
     <div id="successPopup" class="fixed inset-0 z-[130] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onclick="closeSuccessPopupOverlay(event)" style="transform: translateZ(0);">
         <div class="bg-[#0f172a] border border-emerald-500/30 rounded-2xl w-full max-w-sm flex flex-col items-center p-6 text-center shadow-[0_0_40px_rgba(16,185,129,0.2)] popup-scale relative">
             <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 border border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
@@ -217,7 +209,32 @@
     </div>
 
     <script>
-        const secureApp = {
+        if (window.top !== window.self) { window.top.location = window.self.location; }
+        
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+        document.addEventListener('drop', e => e.preventDefault());
+        window.addEventListener('error', e => e.preventDefault());
+        window.addEventListener('unhandledrejection', e => e.preventDefault());
+
+        const originalFetch = window.fetch;
+        let requestCount = 0;
+        setInterval(() => { requestCount = 0; }, 60000);
+        window.fetch = async function(...args) {
+            if (requestCount >= 60) return Promise.reject(new Error('Rate limit exceeded.'));
+            requestCount++;
+            return originalFetch.apply(this, args);
+        };
+
+        let lastActionTime = 0;
+        const throttleAction = (delay = 500) => {
+            const now = Date.now();
+            if (now - lastActionTime < delay) return true;
+            lastActionTime = now;
+            return false;
+        };
+
+        const secureUtils = Object.freeze({
             escapeHTML: (str) => {
                 if (typeof str !== 'string') return '';
                 return str.replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match]));
@@ -229,10 +246,13 @@
             },
             sanitizeInput: (str) => {
                 if (typeof str !== 'string') return '';
-                return str.replace(/[<>]/g, '').substring(0, 100);
-            },
+                return str.replace(/[\x00-\x1F\x7F-\x9F]/g, "").replace(/[<>]/g, '').substring(0, 100);
+            }
+        });
+
+        const appStatus = {
             checkoutLock: false,
-            pollAttempts: 0 
+            pollAttempts: 0
         };
 
         const API_BASE_URL = "https://backendrust.onrender.com/api";
@@ -256,6 +276,11 @@
         let pendingProductId = null;
         let pendingCheckoutBtn = null;
 
+        function openSupport() {
+            if (throttleAction()) return;
+            window.open('lisa.html', '_blank', 'noopener,noreferrer');
+        }
+
         function onTurnstileSuccess(token) {
             appState.cfToken = token;
             
@@ -264,7 +289,7 @@
             cfPopup.classList.remove('flex');
             
             if (pendingProductId && pendingCheckoutBtn) {
-                secureApp.checkoutLock = false; 
+                appStatus.checkoutLock = false; 
                 processCheckout(pendingProductId, pendingCheckoutBtn);
             }
         }
@@ -273,7 +298,7 @@
             try {
                 if (window.localStorage) {
                     const savedCache = window.localStorage.getItem('sanlucid_product_cache');
-                    if(savedCache) {
+                    if(savedCache && savedCache.length < 500000) {
                         const parsed = JSON.parse(savedCache);
                         if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
                             appState.productCache = parsed;
@@ -297,16 +322,20 @@
 
         async function fetchCategories() {
             try {
-                const res = await fetch(`${API_BASE_URL}/categories`);
+                const res = await window.fetch(`${API_BASE_URL}/categories`);
                 if(res.ok) {
                     const cats = await res.json();
-                    const container = document.getElementById('categoryContainer');
-                    let html = `<button onclick="filterByCategory('', this)" class="category-btn text-cyan-400 whitespace-nowrap font-bold">Semua E-Book</button>`;
-                    cats.forEach(cat => {
-                        const safeCat = secureApp.escapeHTML(cat);
-                        html += `<button onclick="filterByCategory('${safeCat}', this)" class="category-btn text-white/70 hover:text-white whitespace-nowrap transition-colors uppercase">${safeCat}</button>`;
-                    });
-                    container.innerHTML = html;
+                    if (Array.isArray(cats)) {
+                        const container = document.getElementById('categoryContainer');
+                        let html = `<button onclick="filterByCategory('', this)" class="category-btn text-cyan-400 whitespace-nowrap font-bold">Semua E-Book</button>`;
+                        cats.forEach(cat => {
+                            if(typeof cat === 'string') {
+                                const safeCat = secureUtils.escapeHTML(cat);
+                                html += `<button onclick="filterByCategory('${safeCat}', this)" class="category-btn text-white/70 hover:text-white whitespace-nowrap transition-colors uppercase">${safeCat}</button>`;
+                            }
+                        });
+                        container.innerHTML = html;
+                    }
                 }
             } catch(e) {}
         }
@@ -327,21 +356,23 @@
 
             try {
                 const url = `${API_BASE_URL}/products?page=${appState.currentPage}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(appState.currentSearch)}&kategori=${encodeURIComponent(appState.currentKategori)}`;
-                const res = await fetch(url);
+                const res = await window.fetch(url);
                 if(!res.ok) throw new Error("Gagal terhubung ke database peladen.");
                 
                 const data = await res.json();
                 
                 if (!append) grid.innerHTML = '';
                 
-                if (data.products.length === 0 && !append) {
-                    emptyState.classList.remove('hidden');
-                } else {
-                    emptyState.classList.add('hidden');
-                    renderCards(data.products, grid);
+                if (data && Array.isArray(data.products)) {
+                    if (data.products.length === 0 && !append) {
+                        emptyState.classList.remove('hidden');
+                    } else {
+                        emptyState.classList.add('hidden');
+                        renderCards(data.products, grid);
+                    }
+                    appState.hasMore = Boolean(data.has_more);
                 }
 
-                appState.hasMore = data.has_more;
                 if (appState.hasMore) {
                     loadMoreBtn.classList.remove('hidden');
                 } else {
@@ -349,7 +380,7 @@
                 }
             } catch (e) {
                 if(!append) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-rose-400 font-bold"><i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i><br>Gagal memuat katalog.<br><span class="text-xs text-white/50 font-normal mt-2 block">${secureApp.escapeHTML(e.message)}</span></div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-rose-400 font-bold"><i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i><br>Gagal memuat katalog.</div>`;
                 }
             } finally {
                 appState.isLoading = false;
@@ -360,28 +391,35 @@
             const fragment = document.createDocumentFragment();
 
             productsArray.forEach(product => {
+                if(!product || typeof product !== 'object') return;
+                
                 appState.productCache[product.id] = product;
                 
-                const safeTitle = secureApp.escapeHTML(product.title || 'Tanpa Judul');
-                const safeKategori = secureApp.escapeHTML(product.kategori || 'UMUM');
-                const isPurchased = appState.purchasedMap[product.id];
-                const priceFormatted = new Intl.NumberFormat('id-ID').format(product.price);
+                const safeTitle = secureUtils.escapeHTML(product.title || 'Tanpa Judul');
+                const safeKategori = secureUtils.escapeHTML(product.kategori || 'UMUM');
+                const safeId = secureUtils.escapeHTML(String(product.id));
+                const isPurchased = appState.purchasedMap[safeId];
+                
+                const numericPrice = typeof product.price === 'number' ? product.price : 0;
+                const priceFormatted = new Intl.NumberFormat('id-ID').format(numericPrice);
                 
                 let safeImg = "https://placehold.co/300x450/1e293b/94a3b8?text=No+Cover";
-                if (product.cover_url && product.cover_url.trim() !== "") {
-                    const sanitizedClientUrl = secureApp.sanitizeURL(product.cover_url).replace("i.ibb.co", "i.ibb.co.com");
-                    safeImg = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=300&output=webp`;
+                if (product.cover_url && typeof product.cover_url === 'string' && product.cover_url.trim() !== "") {
+                    const sanitizedClientUrl = secureUtils.sanitizeURL(product.cover_url).replace("i.ibb.co", "i.ibb.co.com");
+                    if (sanitizedClientUrl) {
+                        safeImg = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=300&output=webp`;
+                    }
                 }
                 
-                const dataRahasia = product.id + ":" + appState.fingerprint;
+                const dataRahasia = safeId + ":" + appState.fingerprint;
                 const enkripsi = btoa(dataRahasia);
                 const masterDownloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
                 
-                const actionPopup = `bukaPopup('${product.id}')`;
+                const actionPopup = `bukaPopup('${safeId}')`;
 
                 const buttonHtml = isPurchased 
                     ? `<a href="${masterDownloadUrl}" target="_blank" rel="noopener noreferrer" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`
-                    : `<button id="btn-${product.id}" onclick="processCheckout('${product.id}', this)" class="w-full py-2 bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 text-[10px] md:text-xs font-semibold rounded-xl transition-colors">Beli Sekarang</button>`;
+                    : `<button id="btn-${safeId}" onclick="processCheckout('${safeId}', this)" class="w-full py-2 bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 text-[10px] md:text-xs font-semibold rounded-xl transition-colors">Beli Sekarang</button>`;
 
                 const card = document.createElement('div');
                 card.className = "glass-card flex flex-col rounded-2xl overflow-hidden";
@@ -398,7 +436,7 @@
                         <h3 onclick="${actionPopup}" class="text-xs md:text-sm font-bold text-white line-clamp-2 leading-snug mb-1 cursor-pointer hover:text-cyan-400 transition-colors">${safeTitle}</h3>
                         <p class="text-[9px] md:text-[11px] text-white/50 mb-2 font-medium uppercase tracking-wider">${safeKategori}</p>
                         <div class="mt-auto mb-3"><span class="text-cyan-400 font-black text-xs md:text-sm">Rp ${priceFormatted}</span></div>
-                        <div class="mt-auto" id="container-btn-${product.id}">${buttonHtml}</div>
+                        <div class="mt-auto" id="container-btn-${safeId}">${buttonHtml}</div>
                     </div>
                 `;
                 fragment.appendChild(card);
@@ -416,19 +454,19 @@
                 if (window.localStorage) savedId = window.localStorage.getItem('sanlucid_device_id');
             } catch(e) {}
             
-            if (savedId && savedId.length < 100) { 
-                appState.fingerprint = savedId;
+            if (savedId && typeof savedId === 'string' && savedId.length < 100) { 
+                appState.fingerprint = secureUtils.sanitizeInput(savedId);
             } else {
                 try {
                     if (window.FingerprintJS) {
                         const fp = await window.FingerprintJS.load();
                         const result = await fp.get();
-                        savedId = result.visitorId;
+                        savedId = secureUtils.sanitizeInput(String(result.visitorId));
                     } else { 
-                        throw new Error("Pustaka Pelacakan Gagal Dimuat"); 
+                        throw new Error("Failed"); 
                     }
                 } catch (error) {
-                    savedId = 'anon-' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+                    savedId = secureUtils.sanitizeInput('anon-' + Date.now().toString(36) + Math.random().toString(36).substr(2, 9));
                 }
                 
                 try {
@@ -439,24 +477,27 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/purchases`, {
+                const response = await window.fetch(`${API_BASE_URL}/purchases`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fingerprint: appState.fingerprint })
                 });
                 if(response.ok) {
                     const data = await response.json();
-                    appState.purchasedMap = data.purchases || {};
-                    updateDownloadBubble(); 
+                    if(data && typeof data.purchases === 'object') {
+                        appState.purchasedMap = data.purchases;
+                        updateDownloadBubble(); 
+                    }
                 }
             } catch (e) {}
         }
 
         function updatePurchaseButtons() {
             Object.keys(appState.purchasedMap).forEach(productId => {
-                const btnContainer = document.getElementById(`container-btn-${productId}`);
+                const safeId = secureUtils.escapeHTML(productId);
+                const btnContainer = document.getElementById(`container-btn-${safeId}`);
                 if (btnContainer) {
-                    const dataRahasia = productId + ":" + appState.fingerprint;
+                    const dataRahasia = safeId + ":" + appState.fingerprint;
                     const enkripsi = btoa(dataRahasia);
                     const masterDownloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
                     btnContainer.innerHTML = `<a href="${masterDownloadUrl}" target="_blank" rel="noopener noreferrer" class="block w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-center text-[10px] md:text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)]"><i class="fa-solid fa-cloud-arrow-down mr-1"></i> Unduh File</a>`;
@@ -470,13 +511,14 @@
             const countBadge = document.getElementById('downloadCount');
             if (purchasedCount > 0) {
                 bubble.classList.remove('hidden');
-                countBadge.innerText = purchasedCount;
+                countBadge.innerText = String(purchasedCount);
             } else {
                 bubble.classList.add('hidden');
             }
         }
 
         function toggleLibraryPopup() {
+            if (throttleAction()) return;
             const popup = document.getElementById('libraryPopup');
             if (popup.classList.contains('hidden')) {
                 const list = document.getElementById('libraryList');
@@ -487,15 +529,19 @@
                     list.innerHTML = '<div class="text-center text-white/50 py-10 flex flex-col items-center"><i class="fa-solid fa-box-open text-4xl mb-3"></i><p>Belum ada e-book yang dibeli.</p></div>';
                 } else {
                     keys.forEach(id => {
-                        const prod = appState.productCache[id];
-                        const rawTitle = prod && prod.title ? prod.title : `E-Book (ID: ${id.substring(0,8)}...)`;
-                        const safeTitle = secureApp.escapeHTML(rawTitle);
+                        const safeId = secureUtils.escapeHTML(id);
+                        const prod = appState.productCache[safeId];
+                        const rawTitle = prod && prod.title ? prod.title : `E-Book (ID: ${safeId.substring(0,8)}...)`;
+                        const safeTitle = secureUtils.escapeHTML(rawTitle);
                         let img = "https://placehold.co/100x150/1e293b/94a3b8?text=Berkas";
-                        if (prod && prod.cover_url && prod.cover_url.trim() !== "") {
-                            img = `https://wsrv.nl/?url=${encodeURIComponent(secureApp.sanitizeURL(prod.cover_url).replace("i.ibb.co", "i.ibb.co.com"))}&w=100&output=webp`;
+                        if (prod && prod.cover_url && typeof prod.cover_url === 'string' && prod.cover_url.trim() !== "") {
+                            const sanitizedClientUrl = secureUtils.sanitizeURL(prod.cover_url).replace("i.ibb.co", "i.ibb.co.com");
+                            if (sanitizedClientUrl) {
+                                img = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=100&output=webp`;
+                            }
                         }
                         
-                        const dataRahasia = id + ":" + appState.fingerprint;
+                        const dataRahasia = safeId + ":" + appState.fingerprint;
                         const enkripsi = btoa(dataRahasia);
                         const downloadUrl = `${API_BASE_URL}/download/${enkripsi}`;
                         
@@ -530,14 +576,15 @@
         }
 
         function clearDesktopSearch() {
+            if (throttleAction(300)) return;
             document.getElementById('desktopSearch').value = '';
             document.getElementById('clearSearchBtn').classList.add('hidden');
             executeSearch('');
         }
 
         function executeSearch(query) {
-            const safeQuery = secureApp.sanitizeInput(query);
-            appState.currentSearch = safeQuery.trim();
+            const safeQuery = secureUtils.sanitizeInput(query).trim();
+            appState.currentSearch = safeQuery;
             appState.currentPage = 1;
             
             document.getElementById('desktopSearch').value = safeQuery;
@@ -555,6 +602,7 @@
         }
 
         function filterByCategory(kategori, btnElement) {
+            if (throttleAction(400)) return;
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('text-cyan-400', 'font-bold');
                 btn.classList.add('text-white/70');
@@ -567,31 +615,40 @@
             document.getElementById('clearSearchBtn').classList.add('hidden');
             
             appState.currentSearch = "";
-            appState.currentKategori = secureApp.escapeHTML(kategori);
+            appState.currentKategori = secureUtils.escapeHTML(kategori);
             appState.currentPage = 1;
             
             fetchProducts(false);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function loadMore() { appState.currentPage++; fetchProducts(true); }
+        function loadMore() { 
+            if (throttleAction(500)) return;
+            appState.currentPage++; 
+            fetchProducts(true); 
+        }
 
         function bukaPopup(productId) {
-            const product = appState.productCache[productId];
+            if (throttleAction()) return;
+            const safeId = secureUtils.escapeHTML(String(productId));
+            const product = appState.productCache[safeId];
             if (!product) return;
 
             let safeImg = "https://placehold.co/300x450/1e293b/94a3b8?text=No+Cover";
-            if (product.cover_url && product.cover_url.trim() !== "") {
-                safeImg = `https://wsrv.nl/?url=${encodeURIComponent(secureApp.sanitizeURL(product.cover_url).replace("i.ibb.co", "i.ibb.co.com"))}&w=300&output=webp`;
+            if (product.cover_url && typeof product.cover_url === 'string' && product.cover_url.trim() !== "") {
+                const sanitizedClientUrl = secureUtils.sanitizeURL(product.cover_url).replace("i.ibb.co", "i.ibb.co.com");
+                if (sanitizedClientUrl) {
+                    safeImg = `https://wsrv.nl/?url=${encodeURIComponent(sanitizedClientUrl)}&w=300&output=webp`;
+                }
             }
 
-            const linkSample = `${API_BASE_URL}/sample/${product.id}`;
+            const linkSample = `${API_BASE_URL}/sample/${safeId}`;
             const rawDeskripsi = product.deskripsi || "Tidak ada deskripsi.";
-            const safeDeskripsi = secureApp.escapeHTML(rawDeskripsi).replace(/\n/g, '<br>');
+            const safeDeskripsi = secureUtils.escapeHTML(rawDeskripsi).replace(/\n/g, '<br>');
 
             document.getElementById('popImg').src = safeImg;
-            document.getElementById('popKategori').innerText = secureApp.escapeHTML(product.kategori || 'UMUM');
-            document.getElementById('popJudul').innerText = secureApp.escapeHTML(product.title || 'Tanpa Judul');
+            document.getElementById('popKategori').innerText = secureUtils.escapeHTML(product.kategori || 'UMUM');
+            document.getElementById('popJudul').innerText = secureUtils.escapeHTML(product.title || 'Tanpa Judul');
             document.getElementById('popDeskripsi').innerHTML = safeDeskripsi;
             document.getElementById('popSampleBtn').href = linkSample;
 
@@ -602,6 +659,7 @@
         }
 
         function tutupPopup() {
+            if (throttleAction()) return;
             const popup = document.getElementById('popupDetail');
             popup.classList.add('hidden'); popup.classList.remove('flex');
             document.body.style.overflow = 'auto';
@@ -610,6 +668,7 @@
         function tutupPopupOverlay(event) { if (event.target.id === 'popupDetail') tutupPopup(); }
 
         function toggleMobileSearch() {
+            if (throttleAction()) return;
             const fab = document.getElementById('mobileSearchFab');
             const input = document.getElementById('mobileSearchInput');
             if (fab.classList.contains('expanded')) {
@@ -620,29 +679,25 @@
             }
         }
 
-        // ==========================================
-        // PROSES PEMBAYARAN + CLOUDFLARE TURNSTILE
-        // ==========================================
         async function processCheckout(productId, btnElement) {
-            if (secureApp.checkoutLock) return;
-            secureApp.checkoutLock = true;
-
-            const btn = btnElement || document.getElementById(`btn-${productId}`);
-            if (!btn) { secureApp.checkoutLock = false; return; }
+            if (appStatus.checkoutLock) return;
+            appStatus.checkoutLock = true;
+            
+            const safeId = secureUtils.escapeHTML(String(productId));
+            const btn = btnElement || document.getElementById(`btn-${safeId}`);
+            if (!btn) { appStatus.checkoutLock = false; return; }
 
             if (!appState.cfToken) {
-                pendingProductId = productId;
+                pendingProductId = safeId;
                 pendingCheckoutBtn = btn;
                 
                 const cfPopup = document.getElementById('cf-popup');
                 cfPopup.classList.remove('hidden');
                 cfPopup.classList.add('flex');
                 
-                if (window.turnstile) {
-                    window.turnstile.reset();
-                }
+                if (window.turnstile) window.turnstile.reset();
                 
-                secureApp.checkoutLock = false;
+                appStatus.checkoutLock = false;
                 return; 
             }
 
@@ -658,11 +713,11 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-                const response = await fetch(`${API_BASE_URL}/checkout`, {
+                const response = await window.fetch(`${API_BASE_URL}/checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        product_id: productId, 
+                        product_id: safeId, 
                         fingerprint: appState.fingerprint,
                         cf_token: appState.cfToken 
                     }),
@@ -670,20 +725,12 @@
                 });
 
                 clearTimeout(timeoutId); 
-
                 const data = await response.json();
                 
-                if (response.ok && data.qr_string) {
-                    appState.pendingProductId = productId; 
-                    appState.currentOrderId = data.order_id;
-                    
-                    const btnSimulate = document.getElementById('btnSimulate');
-                    if(btnSimulate) {
-                        btnSimulate.innerHTML = 'Simulasikan pembayaran';
-                        btnSimulate.disabled = false;
-                    }
-
-                    showQrisPopup(data.qr_string, data.total_payment);
+                if (response.ok && data && data.qr_string) {
+                    appState.pendingProductId = safeId; 
+                    appState.currentOrderId = secureUtils.escapeHTML(String(data.order_id));
+                    showQrisPopup(secureUtils.escapeHTML(String(data.qr_string)), Number(data.total_payment) || 0);
                 } else {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -692,44 +739,13 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             } finally {
-                secureApp.checkoutLock = false; 
+                appStatus.checkoutLock = false; 
                 if (window.turnstile) {
                     window.turnstile.reset();
                     appState.cfToken = ""; 
                 }
                 pendingProductId = null;
                 pendingCheckoutBtn = null;
-            }
-        }
-
-        async function triggerSimulation() {
-            if (!appState.currentOrderId || secureApp.checkoutLock) return;
-            secureApp.checkoutLock = true;
-            
-            const btn = document.getElementById('btnSimulate');
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Webhook...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/simulate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ order_id: appState.currentOrderId })
-                });
-
-                if (response.ok) {
-                    btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Simulasi sukses, menunggu auto-refresh...';
-                } else {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            } catch (error) {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            } finally {
-                secureApp.checkoutLock = false;
             }
         }
 
@@ -752,10 +768,10 @@
             popup.classList.add('flex');
             document.body.style.overflow = 'hidden';
 
-            secureApp.pollAttempts = 0;
+            appStatus.pollAttempts = 0;
             qrisCheckInterval = setInterval(() => {
-                secureApp.pollAttempts++;
-                if (secureApp.pollAttempts > 120) {
+                appStatus.pollAttempts++;
+                if (appStatus.pollAttempts > 120) {
                     closeQrisPopup();
                     return;
                 }
@@ -764,6 +780,7 @@
         }
 
         function closeQrisPopup() {
+            if (throttleAction(300)) return;
             const popup = document.getElementById('qrisPopup');
             popup.classList.add('hidden'); 
             popup.classList.remove('flex');
@@ -792,6 +809,7 @@
         }
 
         function closeSuccessPopup() {
+            if (throttleAction()) return;
             const popup = document.getElementById('successPopup');
             popup.classList.add('hidden');
             popup.classList.remove('flex');
@@ -812,7 +830,7 @@
         async function refreshStatusDiamDiam() {
             if (!appState.fingerprint) return;
             try {
-                const response = await fetch(`${API_BASE_URL}/purchases`, {
+                const response = await window.fetch(`${API_BASE_URL}/purchases`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fingerprint: appState.fingerprint })
@@ -820,19 +838,21 @@
                 
                 if (response.ok) {
                     const data = await response.json();
-                    appState.purchasedMap = data.purchases || {};
-                    
-                    if (appState.pendingProductId && appState.purchasedMap[appState.pendingProductId]) {
-                        closeQrisPopup(); 
-                        updatePurchaseButtons();
-                        updateDownloadBubble();
+                    if(data && typeof data.purchases === 'object') {
+                        appState.purchasedMap = data.purchases;
+                        
+                        if (appState.pendingProductId && appState.purchasedMap[appState.pendingProductId]) {
+                            closeQrisPopup(); 
+                            updatePurchaseButtons();
+                            updateDownloadBubble();
 
-                        setTimeout(() => {
-                            showSuccessPopup();
-                        }, 500);
-                    } else {
-                        updatePurchaseButtons();
-                        updateDownloadBubble();
+                            setTimeout(() => {
+                                showSuccessPopup();
+                            }, 500);
+                        } else {
+                            updatePurchaseButtons();
+                            updateDownloadBubble();
+                        }
                     }
                 }
             } catch (e) {}

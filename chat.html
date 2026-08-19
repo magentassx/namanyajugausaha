@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://backend-8occ.onrender.com wss://backend-8occ.onrender.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://backend-8occ.onrender.com wss://backend-8occ.onrender.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Live Chat Support ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +25,7 @@
         input::placeholder { color: rgba(255, 255, 255, 0.3); }
         input:focus { border-color: #a8c0ff; background: rgba(0, 0, 0, 0.4); box-shadow: 0 0 15px rgba(168, 192, 255, 0.2); }
         .btn-primary { width: 100%; padding: 16px; margin-top: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 16px; cursor: pointer; font-weight: 600; font-size: 15px; transition: transform 0.2s, box-shadow 0.2s; }
-        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:active:not(:disabled) { transform: scale(0.97); }
         #chat-area { display: none; flex-direction: column; height: 100%; animation: fadeIn 0.4s ease; }
         .chat-header { padding: 20px; background: rgba(0, 0, 0, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
         .chat-header .title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px;}
@@ -41,9 +42,10 @@
         .input-group input { background: transparent; border: none; box-shadow: none; padding: 10px 15px; }
         .input-group input:focus { background: transparent; }
         .send-btn { background: #a8c0ff; color: #302b63; border: none; border-radius: 50px; padding: 0 20px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .send-btn:active { transform: scale(0.9); }
+        .send-btn:active:not(:disabled) { transform: scale(0.9); }
         .btn-danger { width: 100%; background: transparent; color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.3); border-radius: 50px; padding: 10px; font-size: 12px; font-weight: 600; margin-top: 10px; cursor: pointer; transition: 0.3s; }
-        .btn-danger:hover { background: rgba(255, 107, 107, 0.1); }
+        .btn-danger:hover:not(:disabled) { background: rgba(255, 107, 107, 0.1); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -57,11 +59,11 @@
             <p>Masukkan tiket rahasiamu untuk terhubung dengan tim Sanlucid.</p>
             <div class="input-wrapper">
                 <label>🎫 Tiket Akses</label>
-                <input type="text" id="ticket" placeholder="Contoh: TRX-8899" autocomplete="off">
+                <input type="text" id="ticket" placeholder="Contoh: TRX-8899" autocomplete="off" maxlength="30">
             </div>
             <div class="input-wrapper">
                 <label>👤 Nama Kamu</label>
-                <input type="text" id="name" placeholder="Panggil aku..." autocomplete="off">
+                <input type="text" id="name" placeholder="Panggil aku..." autocomplete="off" maxlength="30">
             </div>
             <button class="btn-primary" onclick="startChat()">Join Chat 🚀</button>
         </div>
@@ -75,7 +77,7 @@
             <div id="messages"></div>
             <div class="chat-footer">
                 <div class="input-group">
-                    <input type="text" id="msgInput" placeholder="Ketik pesan..." autocomplete="off" onkeypress="if(event.key==='Enter') sendMsg()">
+                    <input type="text" id="msgInput" placeholder="Ketik pesan..." autocomplete="off" maxlength="1500" onkeypress="if(event.key==='Enter') sendMsg()">
                     <button class="send-btn" onclick="sendMsg()">Kirim</button>
                 </div>
                 <button class="btn-danger" onclick="endChat()">Akhiri & Hapus Chat ✌️</button>
@@ -83,8 +85,29 @@
         </div>
     </div>
     <script>
-        const BACKEND_API = "https://backend-8occ.onrender.com";
-        const BACKEND_WS = "wss://backend-8occ.onrender.com";
+        if (window.top !== window.self) window.top.location = window.self.location;
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+        document.addEventListener('drop', e => e.preventDefault());
+        window.addEventListener('error', e => e.preventDefault());
+        window.addEventListener('unhandledrejection', e => e.preventDefault());
+
+        const originalFetch = window.fetch;
+        let requestCount = 0;
+        setInterval(() => { requestCount = 0; }, 60000); 
+
+        window.fetch = async function(...args) {
+            if (requestCount >= 30) return Promise.reject(new Error('Rate limit exceeded.'));
+            requestCount++;
+            return originalFetch.apply(this, args);
+        };
+
+        const CONFIG = Object.freeze({
+            BACKEND_API: "https://backend-8occ.onrender.com",
+            BACKEND_WS: "wss://backend-8occ.onrender.com"
+        });
+
         let ws;
         let currentTicket = "";
         let currentName = "";
@@ -92,16 +115,14 @@
         let isEndingChat = false;
         let lastMsgTime = 0;
 
-        const escapeHTML = (str) => {
-            if (typeof str !== 'string') return '';
-            return str.replace(/[&<>'"]/g, m => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-            })[m]);
+        const validateString = (str, maxLength) => {
+            if (typeof str !== 'string' || !str) return "";
+            return str.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim().substring(0, maxLength);
         };
 
-        const validateString = (str, maxLength) => {
-            if (!str || typeof str !== 'string') return "";
-            return str.trim().substring(0, maxLength);
+        const validateAlphanumeric = (str, maxLength) => {
+            const cleanStr = validateString(str, maxLength);
+            return cleanStr.replace(/[^a-zA-Z0-9\s_-]/g, "");
         };
 
         window.onload = () => {
@@ -109,33 +130,36 @@
                 const savedTicket = localStorage.getItem('sanlucid_ticket');
                 const savedName = localStorage.getItem('sanlucid_name');
                 if (savedTicket && savedName) {
-                    document.getElementById('ticket').value = validateString(savedTicket, 50);
-                    document.getElementById('name').value = validateString(savedName, 50);
+                    document.getElementById('ticket').value = validateAlphanumeric(savedTicket, 30);
+                    document.getElementById('name').value = validateAlphanumeric(savedName, 30);
                     startChat();
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) {}
         };
 
         async function startChat() {
             if (isConnecting) return;
             isConnecting = true;
+            
+            const btn = document.querySelector('.btn-primary');
+            btn.disabled = true;
 
             const rawTicket = document.getElementById('ticket').value;
             const rawName = document.getElementById('name').value;
             
-            currentTicket = validateString(rawTicket, 50);
-            currentName = validateString(rawName, 50);
+            currentTicket = validateAlphanumeric(rawTicket, 30);
+            currentName = validateAlphanumeric(rawName, 30);
             
             if (!currentTicket || !currentName) {
-                alert("Isi dulu tiket sama nama kamu ya! 😉");
+                alert("Isi dulu tiket sama nama kamu ya! 😉 (Gunakan huruf/angka)");
                 isConnecting = false;
+                btn.disabled = false;
                 return;
             }
-            if (currentName.toLowerCase() === "admin") {
-                alert("Ups! Nama 'Admin' udah ada yang punya. Pakai nama lain ya! ✌️");
+            if (currentName.toLowerCase() === "admin" || currentName.toLowerCase() === "system") {
+                alert("Ups! Nama itu udah ada yang punya. Pakai nama lain ya! ✌️");
                 isConnecting = false;
+                btn.disabled = false;
                 return;
             }
 
@@ -146,47 +170,52 @@
 
             document.getElementById('login').style.display = 'none';
             document.getElementById('chat-area').style.display = 'flex';
-            document.getElementById('ticket-display').innerText = '#' + escapeHTML(currentTicket);
+            document.getElementById('ticket-display').textContent = '#' + currentTicket;
             document.getElementById('messages').innerHTML = '';
 
             try {
-                const res = await fetch(`${BACKEND_API}/api/history/${encodeURIComponent(currentTicket)}`, {
+                const res = await window.fetch(`${CONFIG.BACKEND_API}/api/history/${encodeURIComponent(currentTicket)}`, {
                     headers: { "Accept": "application/json" }
                 });
                 
                 if (res.ok) {
                     const history = await res.json();
                     if (Array.isArray(history)) {
-                        history.forEach(msg => drawMsg(msg));
+                        history.forEach(msg => {
+                            if (msg && typeof msg === 'object' && !Array.isArray(msg)) drawMsg(msg);
+                        });
                     }
                 }
 
-                ws = new WebSocket(`${BACKEND_WS}/ws/buyer?ticket=${encodeURIComponent(currentTicket)}`);
+                ws = new WebSocket(`${CONFIG.BACKEND_WS}/ws/buyer?ticket=${encodeURIComponent(currentTicket)}`);
                 
                 ws.onmessage = (event) => {
                     try {
-                        if (event.data.length > 5000) return;
+                        if (typeof event.data !== 'string' || event.data.length > 5000) return;
                         const data = JSON.parse(event.data);
-                        drawMsg(data);
+                        if (data && typeof data === 'object' && !Array.isArray(data)) {
+                            drawMsg(data);
+                        }
                     } catch (err) {}
                 };
 
                 ws.onerror = () => {
-                    if (ws.readyState === WebSocket.OPEN) ws.close();
+                    if (ws && ws.readyState === WebSocket.OPEN) ws.close();
                 };
 
             } catch (error) {
                 alert("Yah, gagal nyambung ke server. Coba refresh lagi ya! 🔌");
             } finally {
                 isConnecting = false;
+                btn.disabled = false;
             }
         }
 
         function drawMsg(data) {
             if (!data || typeof data !== 'object') return;
 
-            const safeSender = escapeHTML(validateString(data.sender, 50));
-            const safeContent = escapeHTML(validateString(data.content, 2000));
+            const safeSender = validateString(data.sender, 50);
+            const safeContent = validateString(data.content, 1500);
 
             if (!safeSender || !safeContent) return;
 
@@ -201,8 +230,14 @@
             }
 
             const div = document.createElement('div');
-            div.className = data.sender === currentName ? 'msg me' : 'msg other';
-            div.innerHTML = `<span class="sender-name">${safeSender}</span>${safeContent}`;
+            div.className = safeSender === currentName ? 'msg me' : 'msg other';
+            
+            const span = document.createElement('span');
+            span.className = 'sender-name';
+            span.textContent = safeSender; 
+            div.appendChild(span);
+            
+            div.appendChild(document.createTextNode(safeContent)); 
             
             const box = document.getElementById('messages');
             box.appendChild(div);
@@ -211,18 +246,18 @@
 
         function sendMsg() {
             const now = Date.now();
-            if (now - lastMsgTime < 500) return; 
+            if (now - lastMsgTime < 1000) return; 
 
             const inputNode = document.getElementById('msgInput');
-            const content = validateString(inputNode.value, 2000);
+            const content = validateString(inputNode.value, 1500);
             
             if (content && ws && ws.readyState === WebSocket.OPEN) {
                 lastMsgTime = now;
-                const chatData = { 
+                const chatData = Object.freeze({ 
                     ticket: currentTicket, 
                     sender: currentName, 
                     content: content 
-                };
+                });
                 
                 try {
                     ws.send(JSON.stringify(chatData));
@@ -237,8 +272,11 @@
 
             if(confirm("Yakin mau udahan? Obrolan ini bakal dihapus permanen loh. 🗑️")) {
                 isEndingChat = true;
+                const btn = document.querySelector('.btn-danger');
+                btn.disabled = true;
+
                 try {
-                    await fetch(`${BACKEND_API}/api/end-chat`, {
+                    await window.fetch(`${CONFIG.BACKEND_API}/api/end-chat`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                         body: JSON.stringify({ ticket: currentTicket })
@@ -248,10 +286,12 @@
                         localStorage.removeItem('sanlucid_ticket');
                         localStorage.removeItem('sanlucid_name');
                     } catch (e) {}
+                    location.reload();
                 } catch (err) {
                     alert("Gagal mengakhiri chat, coba lagi ya!");
                 } finally {
                     isEndingChat = false;
+                    btn.disabled = false;
                 }
             }
         }

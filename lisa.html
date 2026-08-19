@@ -156,7 +156,6 @@
         .sound-btn.active { background-color: #ffffff; color: #111111; }
         .sound-btn svg { width: 18px; height: 18px; fill: currentColor; }
 
-
         /* --- TYPOGRAPHY --- */
         .subtitle-intro {
             font-size: clamp(1rem, 2vw, 1.15rem); 
@@ -183,7 +182,7 @@
         @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         /* ========================================================
-           FITUR BARU: SMART GRID GALLERY & SLIDER
+           SMART GRID GALLERY
            ======================================================== */
         #project-container {
             display: none; opacity: 0; flex-direction: column; gap: 30px;
@@ -194,10 +193,9 @@
             display: flex; flex-direction: column; gap: 12px; pointer-events: auto;
         }
 
-        /* SMART CSS GRID UNTUK FOTO DI DALAM CARD */
         .project-gallery {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Default 2 kolom */
+            grid-template-columns: repeat(2, 1fr); 
             gap: 5px;
             border-radius: 12px;
             overflow: hidden;
@@ -211,73 +209,59 @@
 
         .project-gallery img {
             width: 100%; height: 100%; object-fit: cover;
-            aspect-ratio: 1 / 1; /* Jika banyak foto, jadikan kotak persegi */
-            pointer-events: none; /* Mencegah klik gambar tunggal, klik ditangani div gallery */
+            aspect-ratio: 1 / 1; 
+            pointer-events: none; 
         }
         
-        /* ATURAN CERDAS (SMART GRID) */
-        /* 1. Jika hanya ada 1 gambar, maka full lebar */
-        .project-gallery img:only-child {
-            grid-column: 1 / -1;
-            aspect-ratio: 16 / 9;
-        }
-        /* 2. Jika ada persis 3 gambar, gambar pertama jadi besar full-width di atas */
-        .project-gallery img:first-child:nth-last-child(3) {
-            grid-column: 1 / -1;
-            aspect-ratio: 16 / 9;
-        }
-        /* 3. Sembunyikan gambar ke-5 dan seterusnya di dalam preview (agar rapi max 4) */
-        .project-gallery img:nth-child(n+5) { display: none; }
+        .project-gallery img:only-child { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+        .project-gallery img:first-child:nth-last-child(3) { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+        .project-gallery img:nth-child(n+5) { display: none; } /* Menyembunyikan gambar ke-5 ke atas di Grid */
 
         .project-card p {
             font-size: clamp(0.9rem, 1.8vw, 1.05rem); line-height: 1.5; color: #333;
         }
+        
+        /* Link di dalam teks deskripsi */
+        .project-card p a {
+            color: #1e3a8a; /* Warna biru profesional */
+            font-weight: 600;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+        .project-card p a:hover { color: #0284c7; }
 
         /* --- SLIDER OVERLAY (SCROLL SLIDE) --- */
         #slider-overlay {
             position: fixed; inset: 0;
-            background: rgba(10, 15, 29, 0.95); /* Biru gelap elegan */
+            background: rgba(10, 15, 29, 0.95); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            z-index: 9999;
-            display: flex; flex-direction: column;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease;
+            z-index: 9999; display: flex; flex-direction: column;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
         }
         #slider-overlay.active { opacity: 1; pointer-events: auto; }
         
-        .slider-header {
-            padding: clamp(20px, 4vw, 40px);
-            display: flex; justify-content: flex-start;
-        }
+        .slider-header { padding: clamp(20px, 4vw, 40px); display: flex; justify-content: flex-start; }
         
         .slider-track {
             flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
             gap: 20px; padding: 0 clamp(20px, 4vw, 40px) 40px; align-items: center;
-            scrollbar-width: none; /* Sembunyikan scrollbar native */
+            scrollbar-width: none; 
         }
         .slider-track::-webkit-scrollbar { display: none; }
 
-        /* Setiap Gambar Slide */
         .slider-slide {
-            flex: 0 0 85vw; /* Lebar 85% agar terlihat ada foto selanjutnya di samping */
-            max-width: 800px; height: 75vh;
-            scroll-snap-align: center;
+            flex: 0 0 85vw; max-width: 800px; height: 75vh; scroll-snap-align: center;
             border-radius: 12px; overflow: hidden; position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            background: #000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); background: #000;
             display: flex; justify-content: center; align-items: center;
         }
-        .slider-slide img {
-            width: 100%; height: 100%; object-fit: contain;
-            transition: transform 0.3s;
-        }
+        .slider-slide img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
         .slider-slide:hover img { transform: scale(1.02); }
         
         .slider-hint {
             position: absolute; bottom: 20px; left: 0; width: 100%;
             text-align: center; color: rgba(255,255,255,0.8); font-size: 0.8rem;
-            pointer-events: none; letter-spacing: 1px;
-            animation: pulseHint 2s infinite;
+            pointer-events: none; letter-spacing: 1px; animation: pulseHint 2s infinite;
         }
         @keyframes pulseHint { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
@@ -302,10 +286,7 @@
             transition: color 0.4s cubic-bezier(0.19, 1, 0.22, 1), border-color 0.4s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
         }
 
-        /* Warna khusus untuk tombol Kembali di dalam slider (Light text) */
-        .slider-header .choice-btn {
-            background-color: transparent; border-color: rgba(255,255,255,0.4); color: white;
-        }
+        .slider-header .choice-btn { background-color: transparent; border-color: rgba(255,255,255,0.4); color: white; }
         .slider-header .choice-btn::before { background-color: white; }
         .slider-header .choice-btn:hover { color: #111; border-color: white; }
 
@@ -350,34 +331,49 @@
             <p class="subtitle-intro" id="type-text-1"></p>
             <h1 class="main-headline" id="type-text-2"></h1>
 
-            <!-- AREA GALERI PROJECT -->
+            <!-- AREA GALERI PROJECT PORTFOLIO ANDA -->
             <div id="project-container">
-                <!-- Project 1 (Contoh: 3 FOTO) -->
+                
+                <!-- PROJECT 1: E-commerce Individu (8 FOTO) -->
                 <div class="project-card">
-                    <!-- Semua foto ditaruh di dalam "project-gallery". Tambahkan data-full untuk link aslinya -->
                     <div class="project-gallery" onclick="openSlider(this)">
-                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop" data-full="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200&auto=format&fit=crop" alt="Data Center 1">
-                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop" data-full="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop" alt="Data Center 2">
-                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" data-full="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop" alt="Data Center 3">
+                        <img src="https://i.ibb.co.com/21fm1pHY/8-20kb.jpg" data-full="https://i.ibb.co.com/21fm1pHY/8-20kb.jpg" alt="Ecommerce Individu 1">
+                        <img src="https://i.ibb.co.com/jPFg2GWn/1-20kb.jpg" data-full="https://i.ibb.co.com/jPFg2GWn/1-20kb.jpg" alt="Ecommerce Individu 2">
+                        <img src="https://i.ibb.co.com/1cbtbx2/2-20kb.jpg" data-full="https://i.ibb.co.com/1cbtbx2/2-20kb.jpg" alt="Ecommerce Individu 3">
+                        <img src="https://i.ibb.co.com/1YzNCNtK/3-20kb.jpg" data-full="https://i.ibb.co.com/1YzNCNtK/3-20kb.jpg" alt="Ecommerce Individu 4">
+                        <img src="https://i.ibb.co.com/dJjyW2BF/4-20kb.jpg" data-full="https://i.ibb.co.com/dJjyW2BF/4-20kb.jpg" alt="Ecommerce Individu 5">
+                        <img src="https://i.ibb.co.com/FkKShkyv/5-20kb.jpg" data-full="https://i.ibb.co.com/FkKShkyv/5-20kb.jpg" alt="Ecommerce Individu 6">
+                        <img src="https://i.ibb.co.com/8Lbb6X0N/6-20kb.jpg" data-full="https://i.ibb.co.com/8Lbb6X0N/6-20kb.jpg" alt="Ecommerce Individu 7">
+                        <img src="https://i.ibb.co.com/N62J9fBf/7-20kb.jpg" data-full="https://i.ibb.co.com/N62J9fBf/7-20kb.jpg" alt="Ecommerce Individu 8">
                     </div>
-                    <p><strong>Eksperimen Data Center Mini</strong><br>Belajar merakit server mandiri menggunakan laptop bekas dengan sistem operasi NixOS. Memanfaatkan pondasi bahasa pemrograman Rust untuk memaksimalkan efisiensi dan mengirit daya komputasi.</p>
+                    <p><strong>Ecommerce Individu</strong><br>
+                    <a href="https://feb-wheat-rho.vercel.app" target="_blank">feb-wheat-rho.vercel.app</a><br>
+                    Eccomerce untuk orang yang ingin membuat tokonya sendiri yang sudah dilengkapi pembuat tagihan otomatis dengan payment gateway dan booking kurir otomatis beserta layanan jasa kurir yang akurat dan di lengkapi dengan bot pembuat kode promo otomatis dengan target pengunjung yang tak pernah berbelanja, pengunjung baru, pengunjung yang tidak aktif selama beberapa hari dan banyak lagi bisa di atur, dashborad udah bisa cetak resi berupa pdf dan bisa upload massal seperti shopee dan ecomerce besar lainnya, easy migarsi dari shopee atau tiktok atau tokped karena tinggal link fotonya di masukan ke inputan excel dan banyak fitur dashboard yang sama persis seperti di ecomerce besar pokok nya kecuali fitur analysis karena saya bikin di sever gratisan ada limit yang gak bisa saya coba untuk membuat fitur analisis tapi overall kalo untuk jualan semuanya sudah otomatis. Produk bisa up to 20.000 tanpa lag. menggunakan new sql dan backend rust, masalah security aman lah kalo gak percaya pentest aja coba. Kalo mau beli saya integrasikan semuanya semau anda atau mau migrasi kemana nanti saya atur lagi full stack nya... maintinance full garansi dari saya life time tapi ada fee nya... hehehe. Atau mau gratis tapi setiap transaksi ada fee 1000 namun untuk yang ini saya gak menjamin server bisa bertahan dari limitasi server gratisan soalnya saya deploynya di server gratisan juga, limitasinya cuman masalah bandwitch aja sih dan Request unit itupun kalo memang pengunjung toko anda ramai... kalo mau aman bikin vps sendiri untuk backend nya pake laptop spek gak terlalu rendah udah bisa tapi biar irit listriknya dan pemakaian laptopnya pake linux, saran sih nixos tapi gak usah pake GUI... terus berjalan dengan rust jadi bisa di atasi lah masalah komputasi di spek yang gak terlalu rendah... cuman untuk sql nya mungkin jadi masalah jika pake new sql... bisa disesuaikan. Pinginnya bikin super app gitu sih yang menggabungkan semua jenis produk pembeli dari digital dan fisik dan makanan dan pengiriman dan sosmed semuanya dalam satu platform tapi ya gitulah...
+                    </p>
                 </div>
 
-                <!-- Project 2 (Contoh: 2 FOTO) -->
+                <!-- PROJECT 2: Ecommerce Digital (2 FOTO) -->
                 <div class="project-card">
                     <div class="project-gallery" onclick="openSlider(this)">
-                        <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop" data-full="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1200&auto=format&fit=crop" alt="Design 1">
-                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" data-full="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop" alt="Design 2">
+                        <img src="https://i.ibb.co.com/21mKXv3n/a-20kb.jpg" data-full="https://i.ibb.co.com/21mKXv3n/a-20kb.jpg" alt="Ecommerce Digital 1">
+                        <img src="https://i.ibb.co.com/qZgsskd/b-20kb.jpg" data-full="https://i.ibb.co.com/qZgsskd/b-20kb.jpg" alt="Ecommerce Digital 2">
                     </div>
-                    <p><strong>Desain & Tata Letak</strong><br>Pembuatan desain tingkat dasar menggunakan AutoCAD Plant 3D. Mampu menggabungkan aspek teknis visual dengan presentasi digital menggunakan CorelDraw dan CapCut.</p>
+                    <p><strong>Ecommerce Individu Digital</strong><br>
+                    <a href="https://magentassx.github.io/namanyajugausaha/" target="_blank">https://magentassx.github.io/namanyajugausaha/</a><br>
+                    Ecomerce untuk juala produk digital jenis apa saja up to 20.000 produk tanpa lag lagi lagi ya backend rust dan new sql... untuk file nya kita taruh di tempat rahasia yang semua orang tau... setelah pembayaran produk langsung bisa di download tanpa harus konfirmasi atau apalah yang buang buang waktu untuk mengakali bandwitch kita oper tugas download ke cloudflare... kalo mau beli source kodenya atau mau kerja sama saya bisa juga gue orang nya simple aja yang penting gak jadi masalah buat lu gue ngikut aja sistemnya gimana... gue orangnya gak suka cari masalah juga sih... sistemnya pembeli gak perlu login karena setiap pembeli masuk web sudah ada pencatat finger print jadi setiap device hanya bisa download dari device itu juga tidak bisa di download orang lain... dan fingerprint di catat di database dan link download di batasi hanya untuk 3x doanload dalam waktu 24 jam, ya karena pake gratisan ya.. mungkin kalo bisa buat server sendiri bisa di buat lebih powerfull lagi... dan sudah dilengkapi dengan dua tipe pembayaran bisa tipe pembayaran dari payment gateway atau dari qris statis yang di ubah menjadi dinamis dan  qris dinamis nya tidak hit api langsung jadi masih tergolong aman lah cuman harus instal aplikasi android untuk menangkap webhook nya agar otomatis pembayaran terupdate dan gak usah bingung switch nya tinggal switch dari haralaman dashboard langsung otomatis backend akan melakukan tugasnya mau pake payment gateway atau mau pake qris statis.
+                    </p>
                 </div>
 
-                <!-- Project 3 (Contoh: 1 FOTO) -->
+                <!-- PROJECT 3: Project Assistant (3 FOTO) -->
                 <div class="project-card">
                     <div class="project-gallery" onclick="openSlider(this)">
-                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop" data-full="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" alt="Cyber Security">
+                        <img src="https://i.ibb.co.com/tPkyD1Tf/1a-20kb.jpg" data-full="https://i.ibb.co.com/tPkyD1Tf/1a-20kb.jpg" alt="Project Asistant 1">
+                        <img src="https://i.ibb.co.com/fVDHp8Fg/1b-20kb.jpg" data-full="https://i.ibb.co.com/fVDHp8Fg/1b-20kb.jpg" alt="Project Asistant 2">
+                        <img src="https://i.ibb.co.com/8LC646q2/1c-20kb.jpg" data-full="https://i.ibb.co.com/8LC646q2/1c-20kb.jpg" alt="Project Asistant 3">
                     </div>
-                    <p><strong>Cyber Security Fundamentals</strong><br>Mengeksplorasi keamanan siber dan fundamental jaringan komputer. Walaupun masih tahap pembelajaran dasar, tekad untuk terus mengeksplorasi teknologi baru menjadi nilai utama.</p>
+                    <p><strong>Project Asistant</strong><br>
+                    Project Asistant project untuk pembantu saya banyak sih tool nya yang gak bisa saya sebutkan semuanya termasuk bot dan file file lainnya seperti autocad dan penggunaan aplikasi lainnya... kalo ada project apa aja kabarin saya aja biar saya kerjakan nanti masalah pembayaran di akhir aja setelah project nya selesai biar sama sama enak... contoh ini <a href="https://landingpage-sigma-opal.vercel.app/" target="_blank">https://landingpage-sigma-opal.vercel.app/</a> ... dan bikin bot polymarket karena gak ada uang yang sesuai dengan money management saya saya gak bisa main itu yang mana minimal punya tabungan 5 juta aja susah banget... dan bot forex yang baru menemukan rumus arah harga akan menuju kemana namun untuk arah nya belum menemukan rumusnya...
+                    </p>
                 </div>
             </div>
             
@@ -407,13 +403,13 @@
         </div>
     </div>
 
-    <!-- FITUR BARU: FULLSCREEN SLIDER OVERLAY -->
+    <!-- FULLSCREEN SLIDER OVERLAY -->
     <div id="slider-overlay">
         <div class="slider-header">
             <button onclick="closeSlider()" class="choice-btn">← Kembali</button>
         </div>
         <div class="slider-track" id="slider-track">
-            <!-- Gambar slide akan dimuat ke sini via JS -->
+            <!-- Gambar dimuat via JS -->
         </div>
     </div>
 
@@ -484,24 +480,16 @@
             }
         }, { passive: true });
 
-        // ========================================================
-        // LOGIKA SLIDER GALLERY
-        // ========================================================
         function openSlider(galleryElement) {
             const sliderOverlay = document.getElementById('slider-overlay');
             const sliderTrack = document.getElementById('slider-track');
             
-            // Bersihkan track slider lama
             sliderTrack.innerHTML = ''; 
-
-            // Ambil semua img tag di dalam grid gallery yang diklik
             const imgs = galleryElement.querySelectorAll('img');
             
             imgs.forEach(img => {
-                // Ambil link full jika ada, atau gunakan src thumbnail
                 const fullSrc = img.getAttribute('data-full') || img.src;
                 
-                // Bungkus gambar dalam tag <a> agar bisa diklik terbuka tab baru
                 const slideWrapper = document.createElement('a');
                 slideWrapper.href = fullSrc;
                 slideWrapper.target = "_blank";
@@ -521,7 +509,6 @@
                 sliderTrack.appendChild(slideWrapper);
             });
 
-            // Tampilkan Overlay Slider
             sliderOverlay.classList.add('active');
         }
 
@@ -529,15 +516,11 @@
             const sliderOverlay = document.getElementById('slider-overlay');
             sliderOverlay.classList.remove('active');
             
-            // Jeda sebelum menghapus gambar agar animasi fade-out selesai mulus
             setTimeout(() => {
                 document.getElementById('slider-track').innerHTML = '';
             }, 400);
         }
 
-        // ========================================================
-        // LOGIKA TOMBOL MUTE / UNMUTE 
-        // ========================================================
         const btnSoundOn = document.getElementById('btn-sound-on');
         const btnSoundOff = document.getElementById('btn-sound-off');
 
@@ -551,10 +534,7 @@
             isMuted = true;
             btnSoundOff.classList.add('active');
             btnSoundOn.classList.remove('active');
-            
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); 
-            }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); 
         });
 
         function speakVoice(text) {

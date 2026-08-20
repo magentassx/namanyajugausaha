@@ -583,23 +583,34 @@
         }
 
         function executeSearch(query) {
-            const safeQuery = secureUtils.sanitizeInput(query).trim();
-            appState.currentSearch = safeQuery;
-            appState.currentPage = 1;
-            
-            document.getElementById('desktopSearch').value = safeQuery;
-            document.getElementById('mobileSearchInput').value = safeQuery;
+    // 1. Ambil teks asli yang sudah disanitasi TAPI jangan di-trim dulu untuk tampilan input
+    const rawSanitized = secureUtils.sanitizeInput(query);
+    
+    // 2. Gunakan versi yang di-trim KHUSUS untuk pencarian ke database (state)
+    const safeQuery = rawSanitized.trim();
+    
+    appState.currentSearch = safeQuery;
+    appState.currentPage = 1;
+    
+    // 3. Sinkronisasi kolom pencarian HANYA jika kolom tersebut sedang tidak aktif (fokus)
+    // Ini mencegah spasi hilang dan mencegah kursor lompat saat user sedang mengetik
+    if (document.activeElement.id !== 'desktopSearch') {
+        document.getElementById('desktopSearch').value = rawSanitized;
+    }
+    if (document.activeElement.id !== 'mobileSearchInput') {
+        document.getElementById('mobileSearchInput').value = rawSanitized;
+    }
 
-            if (safeQuery !== "") {
-                document.querySelectorAll('.category-btn').forEach((btn, index) => {
-                    if(index === 0) { btn.classList.add('text-cyan-400', 'font-bold'); btn.classList.remove('text-white/70'); } 
-                    else { btn.classList.remove('text-cyan-400', 'font-bold'); btn.classList.add('text-white/70'); }
-                });
-                appState.currentKategori = "";
-            }
-            fetchProducts(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    if (safeQuery !== "") {
+        document.querySelectorAll('.category-btn').forEach((btn, index) => {
+            if(index === 0) { btn.classList.add('text-cyan-400', 'font-bold'); btn.classList.remove('text-white/70'); } 
+            else { btn.classList.remove('text-cyan-400', 'font-bold'); btn.classList.add('text-white/70'); }
+        });
+        appState.currentKategori = "";
+    }
+    fetchProducts(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
         function filterByCategory(kategori, btnElement) {
             if (throttleAction(400)) return;
